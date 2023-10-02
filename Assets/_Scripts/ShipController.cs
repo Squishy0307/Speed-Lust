@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ShipController : MonoBehaviour
 {
-    private ShipSettings handling;
+    [SerializeField] private ShipSettings handling;
 
     [SerializeField] private GameObject shipPrefab;
 
@@ -39,10 +39,11 @@ public class ShipController : MonoBehaviour
     [SerializeField] float angleOfRoll = 15f;
 
     //inputs
-    private float horz, vert, accel, drift, stunt;
+    [HideInInspector] public float horz, vert, accel, drift, stunt;
 
     //camera controls
-    private float inputAngle, cameraAngle;
+    [HideInInspector] public float inputAngle;
+    private float cameraAngle;
     private Vector3 prevPos, prevUp;
 
     //HUD
@@ -55,15 +56,19 @@ public class ShipController : MonoBehaviour
 
         ship = Instantiate(shipPrefab, transform).transform;
         ship.localPosition = Vector3.zero;
-        handling = ship.GetComponent<ShipSettings>();
         rb.mass = handling.mass;
         rb.drag = handling.drag;
         rb.angularDrag = handling.angularDrag;
 
-        cam = Instantiate(camPrefab, Camera.main.transform.position, Camera.main.transform.rotation).GetComponentInChildren<Camera>();
-        
-        camSmooth = Instantiate(camSpot, transform.position, transform.rotation);
-        camSnappy = Instantiate(camSpot, transform);
+        //Quick Fix: Change this to something proper
+        if (gameObject.CompareTag("Player"))
+        {
+            cam = Instantiate(camPrefab, transform.position, transform.rotation).transform.GetComponent<Camera>();
+
+            camSmooth = Instantiate(camSpot, transform.position, transform.rotation);
+            camSnappy = Instantiate(camSpot, transform);
+        }
+
         prevPos = ship.position;
         prevUp = ship.up;
 
@@ -79,29 +84,16 @@ public class ShipController : MonoBehaviour
         gravityScalar = g_manager.GetGravity();
     }
 
-    void Update()
-    {
-        GetInputs();
-    }
-
     void FixedUpdate()
     {
         HoverLogic();
-        ShipRoll();
-        RotationLogic();
-        Acceleration();
-        CameraFollow();
-    }
+        ShipRoll(horz);
+        RotationLogic(horz);
+        Acceleration(accel);
 
-    void GetInputs()
-    {
-        horz = Input.GetAxis("Horizontal");
-        vert = Input.GetAxis("Vertical");
-        accel = Input.GetAxis("Acceleration");
-        drift = Input.GetAxis("Drift");
-        stunt = Input.GetAxis("Stunt");
-
-        inputAngle = Mathf.Atan2(Input.GetAxis("RightX"), Input.GetAxis("RightY")) * Mathf.Rad2Deg;
+        //Quick Fix: Change this to something proper
+        if (gameObject.CompareTag("Player"))
+            CameraFollow();
     }
 
     void HoverLogic()
@@ -157,12 +149,12 @@ public class ShipController : MonoBehaviour
         angleChange = Mathf.Lerp(angleChange, Vector3.SignedAngle(oldGrav, newGravity, ship.right), 0.1f);
     }
 
-    void ShipRoll()
+    void ShipRoll(float horzInput)
     {
         if (stunt > 0.0f && rollDegrees <= 0.0f)
         {
             rollDegrees = 360.0f;
-            if (horz < 0.0f) rollDir = 1;
+            if (horzInput < 0.0f) rollDir = 1;
             else rollDir = -1;
         }
 
@@ -175,30 +167,30 @@ public class ShipController : MonoBehaviour
         model.RotateAroundLocal(Vector3.forward, (Mathf.Deg2Rad * rollDegrees * rollDir));
     }
 
-    void RotationLogic()
+    void RotationLogic(float horzInput)
     {
         rotatePercentage = Mathf.Lerp(rotatePercentage, vert, Time.fixedDeltaTime * 6f);//3.5
 
-        if (leanPercentage < horz)
+        if (leanPercentage < horzInput)
         {
-            if (horz <= 0.0f)
+            if (horzInput <= 0.0f)
             {
-                leanPercentage = Mathf.Lerp(leanPercentage, -horz, Time.fixedDeltaTime * 1.5f);
+                leanPercentage = Mathf.Lerp(leanPercentage, -horzInput, Time.fixedDeltaTime * 1.5f);
             }
             else
             {
-                leanPercentage = Mathf.Lerp(leanPercentage, -horz, Time.fixedDeltaTime * 2.5f);
+                leanPercentage = Mathf.Lerp(leanPercentage, -horzInput, Time.fixedDeltaTime * 2.5f);
             }
         }
-        else if (leanPercentage > horz)
+        else if (leanPercentage > horzInput)
         {
-            if (horz >= 0.0f)
+            if (horzInput >= 0.0f)
             {
-                leanPercentage = Mathf.Lerp(leanPercentage, -horz, Time.fixedDeltaTime * 1.5f);
+                leanPercentage = Mathf.Lerp(leanPercentage, -horzInput, Time.fixedDeltaTime * 1.5f);
             }
             else
             {
-                leanPercentage = Mathf.Lerp(leanPercentage,-horz, Time.fixedDeltaTime * 2.5f);
+                leanPercentage = Mathf.Lerp(leanPercentage,-horzInput, Time.fixedDeltaTime * 2.5f);
             }
         }
 
@@ -212,12 +204,12 @@ public class ShipController : MonoBehaviour
         Quaternion oldRot = ship.rotation;
 
         ship.position = rb.velocity;
-        ship.RotateAround(Vector3.zero, ship.up, horz * handling.steerSpeed * (Time.fixedDeltaTime / 0.02f));
+        ship.RotateAround(Vector3.zero, ship.up, horzInput * handling.steerSpeed * (Time.fixedDeltaTime / 0.02f));
         rb.velocity = Vector3.Lerp(rb.velocity, ship.position, handling.steerMomentum);
         ship.position = oldPos;
         ship.rotation = oldRot;
 
-        ship.RotateAround(ship.up, horz * handling.steerSpeed * Time.fixedDeltaTime);
+        ship.RotateAround(ship.up, horzInput * handling.steerSpeed * Time.fixedDeltaTime);
 
         Vector3 vel = rb.velocity;
         Vector3 speedUp = Vector3.Project(vel, ship.up);
@@ -256,7 +248,7 @@ public class ShipController : MonoBehaviour
         rb.AddForce(ship.right * accelForce * rb.mass);
     }
 
-    void Acceleration()
+    void Acceleration(float accelInput)
     {
         if(Vector3.Dot(rb.velocity, newGravity) > 0.0f) ForceWithoutDrag(newGravity);
         else rb.AddForce(newGravity * rb.mass);
@@ -264,14 +256,14 @@ public class ShipController : MonoBehaviour
         currentSpeed = Vector3.Dot(rb.velocity, ship.forward);
         HUD.UpdateSpeed(currentSpeed);
 
-        if (accel == 0.0f && drift > 0.0f && handling.driftForward) return;
-        if ((accel > 0.0f && currentSpeed > handling.speed) || (accel < 0.0f && currentSpeed < -handling.reverseSpeed)) return; //for booster pads
+        if (accelInput == 0.0f && drift > 0.0f && handling.driftForward) return;
+        if ((accelInput > 0.0f && currentSpeed > handling.speed) || (accelInput < 0.0f && currentSpeed < -handling.reverseSpeed)) return; //for booster pads
 
         float ratio = 0.0f;
         float accelForce = -currentSpeed;
 
         //Apply deceleration when forward input is not pressed
-        if (accel == 0.0f)
+        if (accelInput == 0.0f)
         {
             if (drift > 0.0f && handling.driftForward)
             {
@@ -280,18 +272,18 @@ public class ShipController : MonoBehaviour
             accelForce *= handling.deceleration;
         }
 
-        if (accel > 0.0f) //Forward acceleration
+        if (accelInput > 0.0f) //Forward acceleration
         {
             ratio = currentSpeed / handling.speed;
             ratio = 1.0f - ratio;
             accelForce = handling.accelerationMin;
-            accelForce += (handling.acceleration - handling.accelerationMin) * ratio * accel;
+            accelForce += (handling.acceleration - handling.accelerationMin) * ratio * accelInput;
         }
-        else if (accel < 0.0f) //Reversing
+        else if (accelInput < 0.0f) //Reversing
         {
             ratio = currentSpeed / -handling.reverseSpeed;
             ratio = 1.0f - ratio;
-            accelForce = handling.brake * ratio * accel;
+            accelForce = handling.brake * ratio * accelInput;
         }
 
         //applying force to the ship to move

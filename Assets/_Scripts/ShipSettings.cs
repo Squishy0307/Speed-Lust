@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 
-public class ShipSettings : MonoBehaviour
+[CreateAssetMenu(fileName = "New Ship Setting", menuName = "Ship Setting/ Ship")]
+public class ShipSettings : ScriptableObject
 {
     //controls how the ship handles
     [Header("Ship Handling")]
