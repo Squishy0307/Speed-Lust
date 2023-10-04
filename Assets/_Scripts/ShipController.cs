@@ -7,6 +7,7 @@ public class ShipController : MonoBehaviour
     [SerializeField] private ShipSettings handling;
 
     [SerializeField] private GameObject shipPrefab;
+    [SerializeField] LayerMask groundLayer;
 
     [Header("Camera Settings")]
     [SerializeField] private float camBackInit = 9.0f; //how much distance you start with
@@ -103,7 +104,7 @@ public class ShipController : MonoBehaviour
         RaycastHit hit;
         float castUp = 1.0f;
         Vector3 oldGrav = newGravity;
-        if (Physics.Raycast(transform.position - newGravity.normalized * castUp, newGravity, out hit, handling.castDistance + castUp))
+        if (Physics.Raycast(transform.position - newGravity.normalized * castUp, newGravity, out hit, handling.castDistance + castUp,groundLayer))
         {
             //adjust gravity to new surface
             newGravity = -hit.normal.normalized;
