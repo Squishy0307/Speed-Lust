@@ -4,8 +4,9 @@ using UnityEngine;
 
 public class ShipDamage : MonoBehaviour
 {
-    //[SerializeField] private GameObject sparks, smallSparks;
     private Rigidbody rb;
+
+    float timer;
 
 	void Start()
     {
@@ -13,37 +14,35 @@ public class ShipDamage : MonoBehaviour
 	}
 	
 
-    //void OnCollisionEnter(Collision collision)
-    //{
-    //    foreach (ContactPoint contact in collision.contacts)
-    //    {
-    //        GameObject newSparks = Instantiate(sparks, transform);
-    //        newSparks.transform.position = contact.point;
-    //        newSparks.transform.LookAt(transform);
-    //        //newSparks.transform.rotation = Quaternion.Euler(contact.normal);
-    //        newSparks.GetComponent<ParticleSystem>().startSpeed = 50.0f + collision.relativeVelocity.sqrMagnitude * 0.01f;
-
-
-    //    }
-    //}
-
     void OnCollisionStay(Collision collision)
     {
-        if (collision.relativeVelocity.magnitude > 10)
+        if (collision.relativeVelocity.magnitude > 20) //10
         {
-            //foreach (ContactPoint contact in collision.contacts)
-            //{
-            //    GameObject newSparks = Instantiate(smallSparks, transform);
-            //    newSparks.transform.position = contact.point;
-            //    newSparks.transform.LookAt(transform);
-            //    //newSparks.transform.rotation = Quaternion.Euler(contact.normal);
-            //}
-
-            //if (collision.gameObject.CompareTag("Walls"))
-            //{
-            //    Vector3 upwardForceFromCollision = Vector3.Dot(collision.impulse, transform.up) * transform.up;
-            //    rb.AddForce(-upwardForceFromCollision, ForceMode.Impulse);
-            //}
+            Vector3 upwardForceFromCollision = Vector3.Dot(collision.impulse, transform.up) * transform.up;
+            rb.AddForce(-upwardForceFromCollision, ForceMode.Impulse);
         }
+
+        if(collision.gameObject.CompareTag("Walls") && this.gameObject.CompareTag("AI"))
+        {
+            timer += Time.deltaTime;
+
+            if(timer >= 4f)
+            {
+                transform.GetComponent<ShipAI>().recalculateNeareastWaypoint();
+                Debug.Log("New Waypoint");
+                timer = 0;
+            }
+        }
+    }
+
+    private void OnCollisionExit(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Walls"))
+        {
+            //timer = 0;
+            //Debug.Log("Wall Exit");
+        }
+
+
     }
 }
