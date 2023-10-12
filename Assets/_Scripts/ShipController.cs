@@ -4,6 +4,13 @@ using UnityEngine;
 
 public class ShipController : MonoBehaviour
 {
+
+    public int checkpointCount;
+    public string lapNumber;
+
+    public Transform nextCheckpoint;
+    public Transform previousCheckpoint;
+
     [SerializeField] private ShipSettings handling;
 
     [SerializeField] private GameObject shipPrefab;
@@ -395,5 +402,10 @@ public class ShipController : MonoBehaviour
     public float AngleChange()
     {
         return angleChange;
+    }
+
+    public void Respawn()
+    {
+        transform.position = previousCheckpoint.position + new Vector3(0,-5,0);
     }
 }
