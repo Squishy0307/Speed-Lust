@@ -4,12 +4,11 @@ using UnityEngine;
 
 public class ShipController : MonoBehaviour
 {
-
+    //Checkpoint Stuff
     public int checkpointCount;
     public string lapNumber;
-
-    public Transform nextCheckpoint;
-    public Transform previousCheckpoint;
+    private Transform nextCheckpoint;
+    private Transform previousCheckpoint;
 
     [SerializeField] private ShipSettings handling;
 
@@ -68,13 +67,12 @@ public class ShipController : MonoBehaviour
         rb.drag = handling.drag;
         rb.angularDrag = handling.angularDrag;
 
-        //Quick Fix: Change this to something proper
         if (gameObject.CompareTag("Player"))
         {
-            cam = Instantiate(camPrefab, transform.position, transform.rotation).transform.GetComponent<Camera>();
+            cam = Camera.main;//Instantiate(camPrefab, Camera.main.transform.position, Camera.main.transform.rotation).transform.GetComponent<Camera>();
 
-            camSmooth = Instantiate(camSpot, transform.position, transform.rotation);
-            camSnappy = Instantiate(camSpot, transform);
+            camSmooth = Instantiate(camSpot, cam.transform.position, cam.transform.rotation);
+            camSnappy = Instantiate(camSpot,transform);
         }
 
         prevPos = ship.position;
@@ -106,12 +104,14 @@ public class ShipController : MonoBehaviour
 
     void HoverLogic()
     {
-        Debug.DrawLine(transform.position, transform.position + newGravity.normalized * handling.desiredHeight, Color.blue);
+        
         //get the current surface i am casting it from slightly higher to stop the ship 'unsticking' when it hits the floor
         RaycastHit hit;
         float castUp = 1.0f;
         Vector3 oldGrav = newGravity;
-        if (Physics.Raycast(transform.position - newGravity.normalized * castUp, newGravity, out hit, handling.castDistance + castUp,groundLayer))
+        Debug.DrawLine(transform.position, transform.position + newGravity.normalized * handling.desiredHeight, Color.blue);
+
+        if (Physics.Raycast(transform.position - newGravity.normalized * castUp,newGravity, out hit, handling.castDistance + castUp,groundLayer))
         {
             //adjust gravity to new surface
             newGravity = -hit.normal.normalized;
@@ -152,6 +152,7 @@ public class ShipController : MonoBehaviour
         {
             //reset to defaults
             newGravity = new Vector3(0.0f, -gravityScalar, 0.0f);
+            Debug.Log("in Air");
         }
 
         angleChange = Mathf.Lerp(angleChange, Vector3.SignedAngle(oldGrav, newGravity, ship.right), 0.1f);
@@ -201,7 +202,6 @@ public class ShipController : MonoBehaviour
                 leanPercentage = Mathf.Lerp(leanPercentage,-horzInput, Time.fixedDeltaTime * 2.5f);
             }
         }
-
         ship.RotateAround(ship.forward, -prevLean);
         ship.RotateAround(ship.right, -prevRotate);
         ship.RotateAround(ship.right, -vibrate);
@@ -228,10 +228,27 @@ public class ShipController : MonoBehaviour
         vel = speedUp + speedRight + speedFwd;
         rb.velocity = Vector3.Lerp(rb.velocity, vel, handling.forwardMomentum);
 
+
         Vector3 proj = ship.forward.normalized - (Vector3.Dot(ship.forward, -newGravity.normalized)) * -newGravity.normalized;
         Quaternion newRot = Quaternion.LookRotation(proj.normalized, -newGravity.normalized);
-        Quaternion finalRot = Quaternion.Lerp(ship.rotation, newRot, 6.0f * Time.fixedDeltaTime);
+        Quaternion finalRot = Quaternion.Lerp(ship.rotation, newRot, 6f * Time.fixedDeltaTime);
         ship.rotation = finalRot;
+
+        //if (newGravity.x != 0)
+        //{
+
+        //}
+
+        //else //If in the air rotate ship according to its velocity
+        //{
+
+        //    if (rb.velocity.y >= -30) //Avoide too much rotationso the nose is not pointing towards the ground
+        //    {
+        //        Quaternion newRot = Quaternion.LookRotation(rb.velocity, ship.up);
+        //        Quaternion finalRot = Quaternion.Lerp(ship.rotation, newRot, 6f * Time.fixedDeltaTime);
+        //        ship.rotation = finalRot;
+        //    }
+        //}
 
         AirBrake();
 
@@ -352,6 +369,12 @@ public class ShipController : MonoBehaviour
         //cam.transform.RotateAround(ship.position, prevUp, cameraAngle);
         prevPos = ship.position;
         prevUp = Vector3.Lerp(prevUp, ship.up, 0.15f);
+    }
+
+    public void SetCheckPoints(Transform NextCheckpoint, Transform PreviousCheckpoint)
+    {
+        nextCheckpoint = NextCheckpoint;
+        previousCheckpoint = PreviousCheckpoint;
     }
 
     public int GetID()

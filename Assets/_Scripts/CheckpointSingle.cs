@@ -7,7 +7,7 @@ public class CheckpointSingle : MonoBehaviour
     private TrackCheckpoints trackCheckpoints;
     private MeshRenderer meshRenderer;
     public Transform nextCheckpoint;
-    public Transform previousCheckpoint;
+    private Transform previousCheckpoint;
 
     private void Awake()
     {
@@ -28,21 +28,20 @@ public class CheckpointSingle : MonoBehaviour
 
             previousCheckpoint = this.transform;
 
-            ship.nextCheckpoint = nextCheckpoint;
-            ship.previousCheckpoint = previousCheckpoint;
-
+            ship.SetCheckPoints(nextCheckpoint, previousCheckpoint);
             ship.checkpointCount++;
 
-            if(ship.checkpointCount >=3)
+            //TO DO: Change the 3 to check the count of number of points in the checkpointList;
+
+            if (ship.checkpointCount >=3) 
             {
+                //TO DO: Check if the current lap is final lap (Used to enable Mega boost)
+
+                ship.checkpointCount = 0; 
                 ship.lapNumber = "Lap 2";
             }
         }
 
-        //if(other.gameObject.CompareTag("Player") || other.gameObject.CompareTag("AI"))
-        //{
-        //    trackCheckpoints.ShipThroughCheckpoint(this, other.transform);
-        //}
     }
 
     public void SetTrackCheckpoints(TrackCheckpoints trackCheckpoints)
