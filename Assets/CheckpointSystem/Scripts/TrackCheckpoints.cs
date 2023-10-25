@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -11,7 +10,7 @@ public class TrackCheckpoints : MonoBehaviour {
     [SerializeField] private List<Transform> carTransformList;
 
     private List<CheckpointSingle> checkpointSingleList;
-    private List<int> nextCheckpointSingleIndexList;
+    public List<int> nextCheckpointSingleIndexList;
 
     private void Awake() {
         Transform checkpointsTransform = transform.Find("Checkpoints");
