@@ -23,7 +23,7 @@ public class CheckpointSingle : MonoBehaviour
     {
         if(other.TryGetComponent<ShipController>(out ShipController ship))
         {
-            trackCheckpoints.ShipThroughCheckpoint(this, other.transform);
+            trackCheckpoints.CarThroughCheckpoint(this, other.transform);
             Debug.Log(other.name);
 
             previousCheckpoint = this.transform;
