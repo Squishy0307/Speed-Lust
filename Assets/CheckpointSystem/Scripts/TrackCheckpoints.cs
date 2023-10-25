@@ -1,28 +1,22 @@
-using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-using System;
 
-public class TrackCheckpoints : MonoBehaviour
-{
+public class TrackCheckpoints : MonoBehaviour {
+
     public event EventHandler OnPlayerCorrectCheckpoint;
     public event EventHandler OnPlayerWrongCheckpoint;
 
-    [SerializeField] private List<Transform> shipTransformList;
-    public List<CheckpointSingle> checkpointSingleList;
-    //public Vector3 lastCheckpoint;
+    [SerializeField] private List<Transform> carTransformList;
 
-    //private Respawn respawn;
+    private List<CheckpointSingle> checkpointSingleList;
+    public List<int> nextCheckpointSingleIndexList;
 
-    private List<int> nextCheckpointSingleIndexList;
-    private void Awake()
-    {
+    private void Awake() {
         Transform checkpointsTransform = transform.Find("Checkpoints");
 
         checkpointSingleList = new List<CheckpointSingle>();
-
-        foreach(Transform checkpointSingleTransform in checkpointsTransform)
-        {
+        foreach (Transform checkpointSingleTransform in checkpointsTransform) {
             CheckpointSingle checkpointSingle = checkpointSingleTransform.GetComponent<CheckpointSingle>();
 
             checkpointSingle.SetTrackCheckpoints(this);
@@ -31,41 +25,31 @@ public class TrackCheckpoints : MonoBehaviour
         }
 
         nextCheckpointSingleIndexList = new List<int>();
-        foreach(Transform shipTransform in shipTransformList)
-        {
+        foreach (Transform carTransform in carTransformList) {
             nextCheckpointSingleIndexList.Add(0);
         }
     }
 
-    public void Update()
-    {
-        
-    }
-
-    public void ShipThroughCheckpoint(CheckpointSingle checkpointSingle, Transform shipTransform)
-    {
-
-        int nextCheckpointSingleIndex = nextCheckpointSingleIndexList[shipTransformList.IndexOf(shipTransform)];
-        if(checkpointSingleList.IndexOf(checkpointSingle) == nextCheckpointSingleIndex)
-        {
+    public void CarThroughCheckpoint(CheckpointSingle checkpointSingle, Transform carTransform) {
+        int nextCheckpointSingleIndex = nextCheckpointSingleIndexList[carTransformList.IndexOf(carTransform)];
+        if (checkpointSingleList.IndexOf(checkpointSingle) == nextCheckpointSingleIndex) {
+            // Correct checkpoint
             Debug.Log("Correct");
-
             CheckpointSingle correctCheckpointSingle = checkpointSingleList[nextCheckpointSingleIndex];
             correctCheckpointSingle.Hide();
 
-            nextCheckpointSingleIndexList[shipTransformList.IndexOf(shipTransform)] = (nextCheckpointSingleIndex + 1) % checkpointSingleList.Count;
-            
+            nextCheckpointSingleIndexList[carTransformList.IndexOf(carTransform)]
+                = (nextCheckpointSingleIndex + 1) % checkpointSingleList.Count;
             OnPlayerCorrectCheckpoint?.Invoke(this, EventArgs.Empty);
-        }
-        else
-        {
+        } else {
+            // Wrong checkpoint
             Debug.Log("Wrong");
             OnPlayerWrongCheckpoint?.Invoke(this, EventArgs.Empty);
-            
+
             CheckpointSingle correctCheckpointSingle = checkpointSingleList[nextCheckpointSingleIndex];
             correctCheckpointSingle.Show();
         }
-
-        //lastCheckpoint = checkpointSingle.transform.position;
     }
+
+
 }
