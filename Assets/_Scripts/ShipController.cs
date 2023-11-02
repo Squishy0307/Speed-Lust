@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 public class ShipController : MonoBehaviour
 {
@@ -16,6 +17,7 @@ public class ShipController : MonoBehaviour
     [SerializeField] LayerMask groundLayer;
 
     [Header("Camera Settings")]
+    private float startcamBack;
     [SerializeField] private float camBackInit = 9.0f; //how much distance you start with
     [SerializeField] private float camBackExtra = 4.0f; //how much more you get at full speed
     [SerializeField] private float camRight = -1.0f;
@@ -23,19 +25,18 @@ public class ShipController : MonoBehaviour
     [SerializeField] private float camRotate = 0.6f; //how much it looks up/down towards the ship
     [SerializeField] private float camSmoothing = 0.35f;
     [SerializeField] private float camTurnRotation = 0.2f;
-    [SerializeField] private GameObject camPrefab;
     [SerializeField] private Transform camSpot;
 
     private Transform ship, model, camSmooth, camSnappy;
-    private Camera cam;
+    private Transform cam;
     private GameManager g_manager;
     private Rigidbody rb;
+    private ShipVisuals shipVisuals;
 
     private Vector3 newGravity = new Vector3(0.0f, -1.0f, 0.0f);
     private float gravityScalar = 9.8f;
     private float vibrate = 0.0f;
     private float currentSpeed, angleChange;
-    private int shipID;
 
     //leaning stuff while moving
     private float prevRotate, prevLean, rotatePercentage, leanPercentage;
@@ -43,7 +44,6 @@ public class ShipController : MonoBehaviour
     //do a barrel roll
     private float rollDegrees = 0.0f;
     private int rollDir = 0;
-    [SerializeField] float angleOfRoll = 15f;
 
     //inputs
     [HideInInspector] public float horz, vert, accel, drift, stunt;
@@ -53,6 +53,10 @@ public class ShipController : MonoBehaviour
     private float cameraAngle;
     private Vector3 prevPos, prevUp;
 
+    //megaboost stuff
+    [SerializeField] private float shipSpeed;
+    [SerializeField] float megaBoostSpeed = 50f;
+
     //HUD
     ShipHUD HUD;
 
@@ -60,6 +64,10 @@ public class ShipController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         HUD = GetComponent<ShipHUD>();
+        shipVisuals = GetComponent<ShipVisuals>();
+
+        shipSpeed = handling.speed;
+        startcamBack = camBackInit;
 
         ship = Instantiate(shipPrefab, transform).transform;
         ship.localPosition = Vector3.zero;
@@ -69,7 +77,7 @@ public class ShipController : MonoBehaviour
 
         if (gameObject.CompareTag("Player"))
         {
-            cam = Camera.main;//Instantiate(camPrefab, Camera.main.transform.position, Camera.main.transform.rotation).transform.GetComponent<Camera>();
+            cam = Camera.main.transform.parent;//Instantiate(camPrefab, Camera.main.transform.position, Camera.main.transform.rotation).transform.GetComponent<Camera>();
 
             camSmooth = Instantiate(camSpot, cam.transform.position, cam.transform.rotation);
             camSnappy = Instantiate(camSpot,transform);
@@ -253,8 +261,8 @@ public class ShipController : MonoBehaviour
         AirBrake();
 
         prevRotate = (Mathf.Deg2Rad * rotatePercentage) * handling.pitchLimit;
-        prevLean = (Mathf.Deg2Rad * leanPercentage) * (30.0f * (currentSpeed / handling.speed) + 20.0f);
-        vibrate = (handling.speed - Mathf.Abs(currentSpeed)) / handling.speed;
+        prevLean = (Mathf.Deg2Rad * leanPercentage) * (30.0f * (currentSpeed / shipSpeed) + 20.0f);
+        vibrate = (shipSpeed - Mathf.Abs(currentSpeed)) / shipSpeed;
         if (vibrate < 0.0f) vibrate = 0.0f;
         vibrate *= Mathf.Sin(Time.time * 100.0f);
         vibrate *= Mathf.Deg2Rad * 0.35f;
@@ -282,7 +290,7 @@ public class ShipController : MonoBehaviour
         HUD.UpdateSpeed(currentSpeed);
 
         if (accelInput == 0.0f && drift > 0.0f && handling.driftForward) return;
-        if ((accelInput > 0.0f && currentSpeed > handling.speed) || (accelInput < 0.0f && currentSpeed < -handling.reverseSpeed)) return; //for booster pads
+        if ((accelInput > 0.0f && currentSpeed > shipSpeed) || (accelInput < 0.0f && currentSpeed < -handling.reverseSpeed)) return; //for booster pads
 
         float ratio = 0.0f;
         float accelForce = -currentSpeed;
@@ -299,7 +307,7 @@ public class ShipController : MonoBehaviour
 
         if (accelInput > 0.0f) //Forward acceleration
         {
-            ratio = currentSpeed / handling.speed;
+            ratio = currentSpeed / shipSpeed;
             ratio = 1.0f - ratio;
             accelForce = handling.accelerationMin;
             accelForce += (handling.acceleration - handling.accelerationMin) * ratio * accelInput;
@@ -338,7 +346,7 @@ public class ShipController : MonoBehaviour
         }
         else
         {
-            vel /= handling.speed;
+            vel /= shipSpeed;
         }
 
         Vector3 diff = cam.transform.position - ship.transform.position;
@@ -364,8 +372,8 @@ public class ShipController : MonoBehaviour
         angle *= camRotate * mult;
 
         newRot = Quaternion.Lerp(newRot, Quaternion.LookRotation(-ship.up * mult, ship.forward * mult), angle / 90.0f);
-        cam.transform.rotation = Quaternion.Lerp(oldRot, newRot, camTurnRotation * (1.0f + vel) * Time.fixedDeltaTime); //camTurnRotation * (1.0f + vel) * Time.fixedDeltaTime
-
+        cam.transform.rotation = Quaternion.Lerp(oldRot, newRot, camTurnRotation * (1.0f + vel) * Time.fixedDeltaTime);
+        //cam.transform.eulerAngles = new Vector3(cam.transform.eulerAngles.x, cam.transform.eulerAngles.y, 0); THIS
         //cam.transform.RotateAround(ship.position, prevUp, cameraAngle);
         prevPos = ship.position;
         prevUp = Vector3.Lerp(prevUp, ship.up, 0.15f);
@@ -377,14 +385,29 @@ public class ShipController : MonoBehaviour
         previousCheckpoint = PreviousCheckpoint;
     }
 
-    public int GetID()
+    public void MegaBoostInitiated(float boostDuration, float speedIncreaseRate)
     {
-        return shipID;
+        StartCoroutine(MegaBoost(boostDuration, speedIncreaseRate));
+    }
+
+    IEnumerator MegaBoost(float boostDuration, float speedIncreaseRate)
+    {
+        float newSpeed = shipSpeed + megaBoostSpeed;
+        DOTween.To(() => shipSpeed, x => shipSpeed = x, newSpeed, speedIncreaseRate);
+
+        DOTween.To(() => camBackInit, x => camBackInit = x, 1f, speedIncreaseRate);
+
+        shipVisuals.MegaBoostFOVIncrease(speedIncreaseRate);
+        yield return new WaitForSeconds(boostDuration);
+        shipVisuals.ResetFOV(speedIncreaseRate);
+        camBackInit = startcamBack;
+
+        shipSpeed -= megaBoostSpeed;
     }
 
     public float GetMaxSpeed()
     {
-        return handling.speed;
+        return shipSpeed;
     }
 
     public float GetCurrentSpeed()
