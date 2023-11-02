@@ -110,8 +110,14 @@ public class VehicleMovement : MonoBehaviour
 
         //Move the ship over time to match the desired rotation to match the ground. This is 
         //done smoothly (using Lerp) to make it feel more realistic
-        rigidBody.MoveRotation(Quaternion.Slerp(rigidBody.rotation, rotation, Time.deltaTime * 10f));
-
+        if (isOnGround)
+        {
+            rigidBody.MoveRotation(Quaternion.Slerp(rigidBody.rotation, rotation, Time.deltaTime * 10f));
+        }
+        else
+        {
+            rigidBody.MoveRotation(Quaternion.Slerp(rigidBody.rotation, rotation, Time.deltaTime * 6f));
+        }
         //Calculate the angle we want the ship's body to bank into a turn based on the current rudder.
         //It is worth noting that these next few steps are completetly optional and are cosmetic.
         //It just feels so darn cool
