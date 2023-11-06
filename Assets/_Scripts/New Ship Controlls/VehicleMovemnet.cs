@@ -1,6 +1,5 @@
-//This script handles all of the physics behaviors for the player's ship. The primary functions
-//are handling the hovering and thrust calculations. 
-
+using DG.Tweening;
+using System.Collections;
 using UnityEngine;
 
 public class VehicleMovement : MonoBehaviour
@@ -12,6 +11,7 @@ public class VehicleMovement : MonoBehaviour
     public float slowingVelFactor = .99f;   //The percentage of velocity the ship maintains when not thrusting (e.g., a value of .99 means the ship loses 1% velocity when not thrusting)
     public float brakingVelFactor = .95f;   //The percentage of velocty the ship maintains when braking
     public float angleOfRoll = 30f;         //The angle that the ship "banks" into a turn
+    public float megaBstSpdIncAmt = 15f;    //The amount of speed boost the ship will get when entering mega boost state
 
     [Header("Hover Settings")]
     public float hoverHeight = 1.5f;        //The height the ship maintains when hovering
@@ -25,28 +25,36 @@ public class VehicleMovement : MonoBehaviour
     public float terminalVelocity = 100f;   //The max speed the ship can go
     public float hoverGravity = 20f;        //The gravity applied to the ship while it is on the ground
     public float fallGravity = 80f;         //The gravity applied to the ship while it is falling
-
-    Rigidbody rigidBody;                    //A reference to the ship's rigidbody
-    Player_Input input;                      //A reference to the player's input					
+	
     float drag;                             //The air resistance the ship recieves in the forward direction
     bool isOnGround;                        //A flag determining if the ship is currently on the ground
 
+    private float rudder;
+    private float thruster;
+    private bool isBraking;
+
+    private bool hitWall;
+    public float bounceForce = 15f;
+
+    Rigidbody rb;                           //A reference to the ship's rigidbody		
+    ShipVisuals shipVisuals;
+    private float startDriveForce;
 
     void Start()
     {
-        //Get references to the Rigidbody and PlayerInput components
-        rigidBody = GetComponent<Rigidbody>();
-        input = GetComponent<Player_Input>();
+        rb = GetComponent<Rigidbody>();
+        shipVisuals = GetComponent<ShipVisuals>();
 
         //Calculate the ship's drag value
         drag = driveForce / terminalVelocity;
+        startDriveForce = driveForce;
     }
 
     void FixedUpdate()
     {
         //Calculate the current speed by using the dot product. This tells us
         //how much of the ship's velocity is in the "forward" direction 
-        speed = Vector3.Dot(rigidBody.velocity, transform.forward);
+        speed = Vector3.Dot(rb.velocity, transform.forward);
 
         //Calculate the forces to be applied to the ship
         CalculatHover();
@@ -60,7 +68,7 @@ public class VehicleMovement : MonoBehaviour
         Vector3 groundNormal;
 
         //Calculate a ray that points straight down from the ship
-        Ray ray = new Ray(transform.position, -transform.up);
+        Ray ray = new Ray(transform.position + (transform.forward * 1), -transform.up);
 
         //Declare a variable that will hold the result of a raycast
         RaycastHit hitInfo;
@@ -86,8 +94,8 @@ public class VehicleMovement : MonoBehaviour
             Vector3 gravity = -groundNormal * hoverGravity * height;
 
             //...and finally apply the hover and gravity forces
-            rigidBody.AddForce(force, ForceMode.Acceleration);
-            rigidBody.AddForce(gravity, ForceMode.Acceleration);
+            rb.AddForce(force, ForceMode.Acceleration);
+            rb.AddForce(gravity, ForceMode.Acceleration);
         }
         else
         {
@@ -97,7 +105,7 @@ public class VehicleMovement : MonoBehaviour
 
             //Calculate and apply the stronger falling gravity straight down on the ship
             Vector3 gravity = -groundNormal * fallGravity;
-            rigidBody.AddForce(gravity, ForceMode.Acceleration);
+            rb.AddForce(gravity, ForceMode.Acceleration);
         }
 
         //Calculate the amount of pitch and roll the ship needs to match its orientation
@@ -112,16 +120,16 @@ public class VehicleMovement : MonoBehaviour
         //done smoothly (using Lerp) to make it feel more realistic
         if (isOnGround)
         {
-            rigidBody.MoveRotation(Quaternion.Slerp(rigidBody.rotation, rotation, Time.deltaTime * 10f));
+            rb.MoveRotation(Quaternion.Slerp(rb.rotation, rotation, Time.deltaTime * 10f));
         }
         else
         {
-            rigidBody.MoveRotation(Quaternion.Slerp(rigidBody.rotation, rotation, Time.deltaTime * 6f));
+            rb.MoveRotation(Quaternion.Slerp(rb.rotation, rotation, Time.deltaTime * 6f));
         }
         //Calculate the angle we want the ship's body to bank into a turn based on the current rudder.
         //It is worth noting that these next few steps are completetly optional and are cosmetic.
         //It just feels so darn cool
-        float angle = angleOfRoll * -input.rudder;
+        float angle = angleOfRoll * -rudder;
 
         //Calculate the rotation needed for this new angle
         Quaternion bodyRotation = transform.rotation * Quaternion.Euler(0f, 0f, angle);
@@ -131,26 +139,26 @@ public class VehicleMovement : MonoBehaviour
 
     void CalculatePropulsion()
     {
-        Vector3 localAngularVelocity = transform.InverseTransformDirection(rigidBody.angularVelocity).normalized * rigidBody.angularVelocity.magnitude;
+        Vector3 localAngularVelocity = transform.InverseTransformDirection(rb.angularVelocity).normalized * rb.angularVelocity.magnitude;
         //Calculate the yaw torque based on the rudder and current angular velocity
-        float rotationTorque = input.rudder - localAngularVelocity.y;                                                //rigidBody.angularVelocity.y;
+        float rotationTorque = rudder - localAngularVelocity.y;                                                //rigidBody.angularVelocity.y;
         //Apply the torque to the ship's Y axis
-        rigidBody.AddRelativeTorque(0f, rotationTorque, 0f, ForceMode.VelocityChange);
+        rb.AddRelativeTorque(0f, rotationTorque, 0f, ForceMode.VelocityChange);
 
         //Calculate the current sideways speed by using the dot product. This tells us
         //how much of the ship's velocity is in the "right" or "left" direction
-        float sidewaysSpeed = Vector3.Dot(rigidBody.velocity, transform.right);
+        float sidewaysSpeed = Vector3.Dot(rb.velocity, transform.right);
 
         //Calculate the desired amount of friction to apply to the side of the vehicle. This
         //is what keeps the ship from drifting into the walls during turns.
         Vector3 sideFriction = -transform.right * (sidewaysSpeed / Time.fixedDeltaTime);
 
         //Finally, apply the sideways friction
-        rigidBody.AddForce(sideFriction, ForceMode.Acceleration);
+        rb.AddForce(sideFriction, ForceMode.Acceleration);
 
         //If not propelling the ship, slow the ships velocity
-        if (input.thruster <= 0f)
-            rigidBody.velocity *= slowingVelFactor;
+        if (thruster <= 0f)
+            rb.velocity *= slowingVelFactor;
 
         //Braking or driving requires being on the ground, so if the ship
         //isn't on the ground, exit this method
@@ -158,13 +166,13 @@ public class VehicleMovement : MonoBehaviour
             return;
 
         //If the ship is braking, apply the braking velocty reduction
-        if (input.isBraking)
-            rigidBody.velocity *= brakingVelFactor;
+        if (isBraking)
+            rb.velocity *= brakingVelFactor;
 
         //Calculate and apply the amount of propulsion force by multiplying the drive force
         //by the amount of applied thruster and subtracting the drag amount
-        float propulsion = driveForce * input.thruster - drag * Mathf.Clamp(speed, 0f, terminalVelocity);
-        rigidBody.AddForce(transform.forward * propulsion, ForceMode.Acceleration);
+        float propulsion = driveForce * thruster - drag * Mathf.Clamp(speed, 0f, terminalVelocity);
+        rb.AddForce(transform.forward * propulsion, ForceMode.Acceleration);
     }
 
     void OnCollisionStay(Collision collision)
@@ -172,18 +180,90 @@ public class VehicleMovement : MonoBehaviour
         //If the ship has collided with an object on the Wall layer...
         if (collision.gameObject.layer == LayerMask.NameToLayer("Walls"))
         {
+            //StartCoroutine(GotHitByWall());
+
             //...calculate how much upward impulse is generated and then push the vehicle down by that amount 
             //to keep it stuck on the track (instead up popping up over the wall)
             Vector3 upwardForceFromCollision = Vector3.Dot(collision.impulse, transform.up) * transform.up;
-            rigidBody.AddForce(-upwardForceFromCollision, ForceMode.Impulse);
+            rb.AddForce(-upwardForceFromCollision, ForceMode.Impulse);
+
+            Debug.Log("Bounce you DUMDUM");
+
         }
 
-        Debug.Log("hit");
+    }
+
+    public void MegaBoostInitiated(float boostDuration, float speedIncreaseRate)
+    {
+        StartCoroutine(MegaBoost(boostDuration, speedIncreaseRate));
+    }
+
+    IEnumerator MegaBoost(float boostDuration, float speedIncreaseRate)
+    {
+        float newSpeed = driveForce + megaBstSpdIncAmt;
+        DOTween.To(() => driveForce, x => driveForce = x, newSpeed, speedIncreaseRate);
+
+        shipVisuals.MegaBoostFOVIncrease(speedIncreaseRate);
+        yield return new WaitForSeconds(boostDuration);
+        shipVisuals.ResetFOV(speedIncreaseRate);
+
+        driveForce = startDriveForce;
+    }
+
+    IEnumerator GotHitByWall()
+    {
+        if (!hitWall)
+        {
+            hitWall = true;
+            yield return new WaitForSeconds(0.25f);
+            hitWall = false;
+        }
+    }
+
+    public bool CanControlVehicle()
+    {
+        if (hitWall)
+        {
+            return false;
+        }
+
+        else
+        {
+            return true;
+        }
+    }
+
+    public void SetInputs(float Rudder, float Thruster, bool IsBraking)
+    {
+        if (CanControlVehicle())
+        {
+            rudder = Rudder;
+            thruster = Thruster;
+            isBraking = IsBraking;
+        }
+        else
+        {
+            rudder = 0;
+            thruster = 0;
+            isBraking = false;
+        }
+    }
+
+    public float GetCurrentSpeed()
+    {
+        float currentSpeed = Vector3.Dot(rb.velocity, transform.forward);
+        return currentSpeed;
+    }
+
+    public Transform GetShipTransform()
+    {
+        return shipBody.transform;
     }
 
     public float GetSpeedPercentage()
     {
         //Returns the total percentage of speed the ship is traveling
-        return rigidBody.velocity.magnitude / terminalVelocity;
+        return rb.velocity.magnitude / terminalVelocity;
     }
+
 }

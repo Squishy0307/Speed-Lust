@@ -9,12 +9,10 @@ public class MegaBoost : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.TryGetComponent<ShipController>(out ShipController ship))
+        if (other.TryGetComponent(out VehicleMovement vehicle))
         {
-            if (ship.lapNumber == "Lap 3")
-            {
-                ship.MegaBoostInitiated(boostDuration, speedIncreaseRate);
-            }
+            Debug.Log("<b><color=green> MEGA BOOST!!</color></b>");
+            vehicle.MegaBoostInitiated(boostDuration,speedIncreaseRate);
         }
     }
 }

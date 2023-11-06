@@ -20,26 +20,29 @@ public class ShipVisuals : MonoBehaviour
 
     private void Update()
     {
-        if(Input.GetMouseButtonDown(0))
-        {
-            MegaBoostFOVIncrease(1.2f);
-        }
-        else if (Input.GetMouseButtonDown(1))
-        {
-            ResetFOV(1f);
-        }
+        //if(Input.GetMouseButtonDown(0))
+        //{
+        //    MegaBoostFOVIncrease(1.2f);
+        //}
+        //else if (Input.GetMouseButtonDown(1))
+        //{
+        //    ResetFOV(1f);
+        //}
     }
 
     public void increaseFOV(float timeToReachDesireFOV,float FOV)
     {
-        if (virtualCamera.gameObject.activeSelf)
+        if (gameObject.CompareTag("Player"))
         {
-            DOTween.To(() => virtualCamera.m_Lens.FieldOfView, x => virtualCamera.m_Lens.FieldOfView = x, FOV, timeToReachDesireFOV);
-        }
+            if (virtualCamera.gameObject.activeSelf)
+            {
+                DOTween.To(() => virtualCamera.m_Lens.FieldOfView, x => virtualCamera.m_Lens.FieldOfView = x, FOV, timeToReachDesireFOV);
+            }
 
-        else
-        {
-            DOTween.To(() => cam.fieldOfView, x => cam.fieldOfView = x, FOV, timeToReachDesireFOV);
+            else
+            {
+                DOTween.To(() => cam.fieldOfView, x => cam.fieldOfView = x, FOV, timeToReachDesireFOV);
+            }
         }
     }
 
