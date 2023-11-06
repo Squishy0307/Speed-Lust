@@ -5,7 +5,7 @@ using System.Linq;
 
 public class ShipAI : MonoBehaviour
 {
-    private ShipController ship;
+    private VehicleMovement ship;
     private Vector3 targetPosition;
 
 
@@ -26,9 +26,13 @@ public class ShipAI : MonoBehaviour
     //Avoidance
     Vector3 avoidanceVectorLerped = Vector3.zero;
 
+    private float thruster;
+    private float rudder;
+    private bool isBraking;
+
     void Awake()
     {
-        ship = GetComponent<ShipController>();
+        ship = GetComponent<VehicleMovement>();
         allWaypoints = FindObjectsOfType<WaypointNode>(); 
     }
 
@@ -119,8 +123,9 @@ public class ShipAI : MonoBehaviour
 
         if ( ship != null )
         {
-            ship.accel = forwardAmount;
-            ship.horz = turnAmount;
+            //ship.accel = forwardAmount;
+            //ship.horz = turnAmount;
+            ship.SetInputs(turnAmount, forwardAmount, false);
         }
         else
         {
@@ -243,7 +248,7 @@ public class ShipAI : MonoBehaviour
         Debug.DrawLine(rayOrigin, rayOrigin + rayDirection * rayMaxDistance);
         //Gizmos.DrawWireSphere(rayOrigin + rayDirection * rayMaxDistance, shipDetectionRadius);
 
-        //Gizmos.DrawSphere(currentTargetPos, 5f);
+        Gizmos.DrawSphere(currentTargetPos, 5f);
     }
 
 }

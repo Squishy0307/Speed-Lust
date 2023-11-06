@@ -2,38 +2,54 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class ShipHUD : MonoBehaviour
 {
-    [SerializeField] private Canvas HUD;
+    [SerializeField] private Canvas HUD;            //Canvas 
+    [SerializeField] TextMeshProUGUI speedText;     //UI text element to show current speed
 
-    private float speed;
-    private Text speedText;
+    private float speed;                            //Current Speed of the vehical
+    private int currentLap;                         //Current Lap of the vehicle
+    
+    private int checkpointCount;                    //Total Checkpoints the vehicle has went through
+    private Transform nextCheckpoint;               //Next checkpoint 
+    private Transform previousCheckpoint;           //Previous checkpoint
+
+    private VehicleMovement vehicle;                //Reference to the vehcile script
 
 	void Start()
     {
+        //We only want to update the UI if the current vehicle is controlled by the player, removing the Canvas HUD will not call the update fn
+        if (transform.gameObject.tag != "Player")
+            HUD = null;
+        
         if (!HUD) return;
+
+        vehicle = GetComponent<VehicleMovement>();
 
         foreach (Transform child in HUD.GetComponentsInChildren<Transform>())
         {
             if (child.gameObject.name == "Speed")
             {
-                speedText = child.GetComponent<Text>();
+                speedText = child.GetComponent<TextMeshProUGUI>();
             }
         }
     }
 	
 	void Update()
     {
+        //We only want to update the UI if the current vehicle is controlled by the player
+        if (!HUD) return;
+
+        speed = vehicle.GetCurrentSpeed();
         UpdateHUD();
 	}
 
     void UpdateHUD()
-    {
-        if (!HUD) return;
-
-        // default 3.6f
-        float currentSpd = speed * 30f;
+    {      
+        // Convert the speed into KPH by multiplying the value by 3.6f
+        float currentSpd = speed * 30f; //FAKE SPEED
         if (currentSpd > 0.5f)
         {
             speedText.text = currentSpd.ToString("F0") + " KPH";
@@ -44,8 +60,30 @@ public class ShipHUD : MonoBehaviour
         }
     }
 
-    public void UpdateSpeed(float newSpeed)
+    //Updates the checkpoints
+    public void SetCheckPoints(Transform NextCheckpoint, Transform PreviousCheckpoint)
     {
-        speed = newSpeed;
+        nextCheckpoint = NextCheckpoint;
+        previousCheckpoint = PreviousCheckpoint;
+    }
+
+    public void Respawn()
+    {
+        transform.position = previousCheckpoint.position + new Vector3(0, -5, 0);
+    }
+
+    public void UpdateCheckpointCount()
+    {
+        checkpointCount++;
+    }
+
+    public int GetCheckpointCount()
+    {
+        return checkpointCount;
+    }
+
+    public void UpdateLap(int LapNumber)
+    {
+        currentLap = LapNumber;
     }
 }

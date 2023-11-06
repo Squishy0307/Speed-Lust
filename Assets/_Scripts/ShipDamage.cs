@@ -18,8 +18,8 @@ public class ShipDamage : MonoBehaviour
     {
         if (collision.relativeVelocity.magnitude > 20) //10
         {
-            Vector3 upwardForceFromCollision = Vector3.Dot(collision.impulse, transform.up) * transform.up;
-            rb.AddForce(-upwardForceFromCollision, ForceMode.Impulse);
+            //Vector3 upwardForceFromCollision = Vector3.Dot(collision.impulse, transform.up) * transform.up;
+            //rb.AddForce(-upwardForceFromCollision, ForceMode.Impulse);
         }
 
         if(collision.gameObject.CompareTag("Walls") && this.gameObject.CompareTag("AI"))
@@ -37,11 +37,11 @@ public class ShipDamage : MonoBehaviour
 
     private void OnCollisionExit(Collision collision)
     {
-        if (collision.gameObject.CompareTag("Walls"))
-        {
+        //if (collision.gameObject.CompareTag("Walls"))
+        //{
             //timer = 0;
             //Debug.Log("Wall Exit");
-        }
+        //}
 
 
     }
