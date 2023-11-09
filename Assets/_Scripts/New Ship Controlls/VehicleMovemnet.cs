@@ -281,5 +281,20 @@ public class VehicleMovement : MonoBehaviour
         //Returns the total percentage of speed the ship is traveling
         return rb.velocity.magnitude / terminalVelocity;
     }
+    public float GetMaxSpeed()
+    {
+        return terminalVelocity;
+    }
 
+    public void BoostPad()
+    {
+        StartCoroutine(booster());
+    }
+
+    private IEnumerator booster()
+    {
+        rb.drag = 0.9f;
+        yield return new WaitForSeconds(0.8f);
+        rb.drag = 0;
+    }
 }
