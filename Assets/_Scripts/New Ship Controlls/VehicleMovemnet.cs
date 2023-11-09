@@ -37,8 +37,10 @@ public class VehicleMovement : MonoBehaviour
     public float bounceForce = 15f;
 
     Rigidbody rb;                           //A reference to the ship's rigidbody		
-    ShipVisuals shipVisuals;
+    ShipVisuals shipVisuals;                //A reference to the ShipVisuals script
     private float startDriveForce;
+    private bool isPlayer = false;
+    private bool landEffectsTriggered = false;
 
     void Start()
     {
@@ -48,6 +50,11 @@ public class VehicleMovement : MonoBehaviour
         //Calculate the ship's drag value
         drag = driveForce / terminalVelocity;
         startDriveForce = driveForce;
+
+        if (gameObject.CompareTag("Player")) //Check if current ship is controlled by player or not
+        {
+            isPlayer = true;
+        }
     }
 
     void FixedUpdate()
@@ -96,6 +103,12 @@ public class VehicleMovement : MonoBehaviour
             //...and finally apply the hover and gravity forces
             rb.AddForce(force, ForceMode.Acceleration);
             rb.AddForce(gravity, ForceMode.Acceleration);
+
+            if (landEffectsTriggered)
+            {
+                CameraShaker.Instance.ShakeNow(3.5f, 0.1f, isPlayer);
+                landEffectsTriggered = false;
+            }
         }
         else
         {
@@ -106,6 +119,8 @@ public class VehicleMovement : MonoBehaviour
             //Calculate and apply the stronger falling gravity straight down on the ship
             Vector3 gravity = -groundNormal * fallGravity;
             rb.AddForce(gravity, ForceMode.Acceleration);
+
+            landEffectsTriggered = true;
         }
 
         //Calculate the amount of pitch and roll the ship needs to match its orientation
@@ -203,6 +218,7 @@ public class VehicleMovement : MonoBehaviour
         float newSpeed = driveForce + megaBstSpdIncAmt;
         DOTween.To(() => driveForce, x => driveForce = x, newSpeed, speedIncreaseRate);
 
+        CameraShaker.Instance.ShakeNow(1.2f, boostDuration,isPlayer);
         shipVisuals.MegaBoostFOVIncrease(speedIncreaseRate);
         yield return new WaitForSeconds(boostDuration);
         shipVisuals.ResetFOV(speedIncreaseRate);

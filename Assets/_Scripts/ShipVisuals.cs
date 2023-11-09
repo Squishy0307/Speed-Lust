@@ -11,6 +11,7 @@ public class ShipVisuals : MonoBehaviour
     float megaBoostFOV = 110;
 
     [SerializeField] CinemachineVirtualCamera virtualCamera;
+    [SerializeField] AnimationCurve ease;
 
     private void Awake()
     {
@@ -18,19 +19,7 @@ public class ShipVisuals : MonoBehaviour
         camStartFOV = cam.fieldOfView;
     }
 
-    private void Update()
-    {
-        //if(Input.GetMouseButtonDown(0))
-        //{
-        //    MegaBoostFOVIncrease(1.2f);
-        //}
-        //else if (Input.GetMouseButtonDown(1))
-        //{
-        //    ResetFOV(1f);
-        //}
-    }
-
-    public void increaseFOV(float timeToReachDesireFOV,float FOV)
+    public void IncreaseFOV(float FOV, float timeToReachDesireFOV)
     {
         if (gameObject.CompareTag("Player"))
         {
@@ -52,7 +41,7 @@ public class ShipVisuals : MonoBehaviour
         {
             if (virtualCamera.gameObject.activeSelf)
             {
-                DOTween.To(() => virtualCamera.m_Lens.FieldOfView, x => virtualCamera.m_Lens.FieldOfView = x, megaBoostFOV, timeToReachDesireFOV);
+                DOTween.To(() => virtualCamera.m_Lens.FieldOfView, x => virtualCamera.m_Lens.FieldOfView = x, megaBoostFOV, timeToReachDesireFOV).SetEase(ease);
             }
             else
             {
