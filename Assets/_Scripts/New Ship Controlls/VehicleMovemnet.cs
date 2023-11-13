@@ -8,6 +8,7 @@ public class VehicleMovement : MonoBehaviour
 
     [Header("Drive Settings")]
     public float driveForce = 17f;          //The force that the engine generates
+    public float maxSpeed = 120f;           //Max Speed the ship can go
     public float slowingVelFactor = .99f;   //The percentage of velocity the ship maintains when not thrusting (e.g., a value of .99 means the ship loses 1% velocity when not thrusting)
     public float brakingVelFactor = .95f;   //The percentage of velocty the ship maintains when braking
     public float angleOfRoll = 30f;         //The angle that the ship "banks" into a turn
@@ -104,11 +105,13 @@ public class VehicleMovement : MonoBehaviour
             rb.AddForce(force, ForceMode.Acceleration);
             rb.AddForce(gravity, ForceMode.Acceleration);
 
-            if (landEffectsTriggered)
+            if (landEffectsTriggered && isPlayer)
             {
                 CameraShaker.Instance.ShakeNow(3.5f, 0.1f, isPlayer);
                 landEffectsTriggered = false;
             }
+
+            Debug.DrawLine(hitInfo.point, hitInfo.point + groundNormal * maxGroundDist, Color.blue);
         }
         else
         {
@@ -169,7 +172,8 @@ public class VehicleMovement : MonoBehaviour
         Vector3 sideFriction = -transform.right * (sidewaysSpeed / Time.fixedDeltaTime);
 
         //Finally, apply the sideways friction
-        rb.AddForce(sideFriction, ForceMode.Acceleration);
+        if(thruster != 0 && !hitWall)
+            rb.AddForce(sideFriction, ForceMode.Acceleration);
 
         //If not propelling the ship, slow the ships velocity
         if (thruster <= 0f)
@@ -187,6 +191,13 @@ public class VehicleMovement : MonoBehaviour
         //Calculate and apply the amount of propulsion force by multiplying the drive force
         //by the amount of applied thruster and subtracting the drag amount
         float propulsion = driveForce * thruster - drag * Mathf.Clamp(speed, 0f, terminalVelocity);
+
+        if (GetCurrentSpeed() > maxSpeed)
+        {
+            rb.velocity *= 0.995f;
+            return;
+        }
+
         rb.AddForce(transform.forward * propulsion, ForceMode.Acceleration);
     }
 
@@ -204,28 +215,21 @@ public class VehicleMovement : MonoBehaviour
 
             Debug.Log("Bounce you DUMDUM");
 
+            //bounce off wall
+            //float dir = 1;
+            //if (collision.contacts[0].normal.z > 0)
+            //{
+            //    dir = -1;
+            //}
+            //rb.AddForce(transform.right * dir * bounceForce, ForceMode.Impulse);
+
+            //Vector3 localAngularVelocity = transform.InverseTransformDirection(rb.angularVelocity).normalized * rb.angularVelocity.magnitude;
+            //float rotationTorque = dir - localAngularVelocity.y;                                                 
+            //rb.AddRelativeTorque(0f, -rotationTorque * bounceForce * 10, 0f, ForceMode.Impulse);
+
         }
 
     }
-
-    public void MegaBoostInitiated(float boostDuration, float speedIncreaseRate)
-    {
-        StartCoroutine(MegaBoost(boostDuration, speedIncreaseRate));
-    }
-
-    IEnumerator MegaBoost(float boostDuration, float speedIncreaseRate)
-    {
-        float newSpeed = driveForce + megaBstSpdIncAmt;
-        DOTween.To(() => driveForce, x => driveForce = x, newSpeed, speedIncreaseRate);
-
-        CameraShaker.Instance.ShakeNow(1.2f, boostDuration,isPlayer);
-        shipVisuals.MegaBoostFOVIncrease(speedIncreaseRate);
-        yield return new WaitForSeconds(boostDuration);
-        shipVisuals.ResetFOV(speedIncreaseRate);
-
-        driveForce = startDriveForce;
-    }
-
     IEnumerator GotHitByWall()
     {
         if (!hitWall)
@@ -243,10 +247,28 @@ public class VehicleMovement : MonoBehaviour
             return false;
         }
 
-        else
-        {
-            return true;
-        }
+        return true;
+    }
+
+
+    public void MegaBoostInitiated(float boostDuration, float speedIncreaseRate)
+    {
+        StartCoroutine(MegaBoost(boostDuration, speedIncreaseRate));
+    }
+
+    IEnumerator MegaBoost(float boostDuration, float speedIncreaseRate)
+    {
+        float newSpeed = driveForce + megaBstSpdIncAmt;
+        maxSpeed += megaBstSpdIncAmt;
+        DOTween.To(() => driveForce, x => driveForce = x, newSpeed, speedIncreaseRate);
+
+        CameraShaker.Instance.ShakeNow(1.2f, boostDuration,isPlayer);
+        shipVisuals.MegaBoostFOVIncrease(speedIncreaseRate);
+        yield return new WaitForSeconds(boostDuration);
+        shipVisuals.ResetFOV(speedIncreaseRate);
+
+        driveForce = startDriveForce;
+        maxSpeed -= megaBstSpdIncAmt;
     }
 
     public void SetInputs(float Rudder, float Thruster, bool IsBraking)
@@ -283,18 +305,7 @@ public class VehicleMovement : MonoBehaviour
     }
     public float GetMaxSpeed()
     {
-        return terminalVelocity;
+        return maxSpeed;
     }
 
-    public void BoostPad()
-    {
-        StartCoroutine(booster());
-    }
-
-    private IEnumerator booster()
-    {
-        rb.drag = 0.9f;
-        yield return new WaitForSeconds(0.8f);
-        rb.drag = 0;
-    }
 }

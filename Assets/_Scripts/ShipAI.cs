@@ -29,6 +29,7 @@ public class ShipAI : MonoBehaviour
     private float thruster;
     private float rudder;
     private bool isBraking;
+    private float lastDirection;
 
     void Awake()
     {
@@ -36,24 +37,17 @@ public class ShipAI : MonoBehaviour
         allWaypoints = FindObjectsOfType<WaypointNode>(); 
     }
 
+    private void Start()
+    {
+        FindSetNextTargetPos();
+    }
+
 
     void Update()
     {
         //TO DO: Add respawn is the ship velosity stays almost same for more than few seconds 
         //       Control the pitch of the ship based on ground normal
-
-        if (currentWaypoint == null)
-        {
-            currentWaypoint = FindClosestWaypoint();
-        }
-
-        if (currentWaypoint != null)
-        {
-            currentTargetPos = currentWaypoint.getPosition();
-            SetTargetPosition(currentTargetPos);
-        }
-
-        
+    
         float turnAmount = 0f;
        
 
@@ -90,6 +84,8 @@ public class ShipAI : MonoBehaviour
             else
             {
                 currentWaypoint = currentWaypoint.nextWaypointNode[Random.Range(0,currentWaypoint.nextWaypointNode.Length)];
+                Debug.Log("new");
+                FindSetNextTargetPos();
             }
 
             AvoidAiShips(dirToMove,out dirToMove);
@@ -97,22 +93,29 @@ public class ShipAI : MonoBehaviour
             //Turning ship
             //gets an angle to make the ship turn (value is positive if target is to right and negative if target is on left)
             float angleToDirection = Vector3.SignedAngle(ship.GetShipTransform().forward, dirToMove, ship.GetShipTransform().up);
-            
-            if (angleToDirection > 0)
+            lastDirection = Mathf.Lerp(lastDirection,angleToDirection,Time.deltaTime * 4.5f);
+            //Debug.Log(angleToDirection);
+
+            if (lastDirection > 2)
             {
-                turnAmount = 1f;
+                turnAmount = 1;
             }
+            else if (lastDirection < -2)
+            {
+                turnAmount = -1;
+            }
+
             else
             {
-                turnAmount = -1f;
+                turnAmount = 0;
             }
         }
         else
         {
             //TragetReached
-            if (ship.GetCurrentSpeed() > 15f)
+            if (ship.GetCurrentSpeed() > 75f)
             {
-                forwardAmount = -1f;
+                forwardAmount = -0.5f;
             }
             else
             {
@@ -131,6 +134,24 @@ public class ShipAI : MonoBehaviour
         {
             Debug.LogError("Add Ship Controller Component to this object!");
         }
+
+        thruster = forwardAmount;
+        rudder = turnAmount;
+    }
+
+    void FindSetNextTargetPos()
+    {
+        if (currentWaypoint == null)
+        {
+            currentWaypoint = FindClosestWaypoint();
+        }
+
+        if (currentWaypoint != null)
+        {
+            currentTargetPos = currentWaypoint.getPosition();
+            SetTargetPosition(currentTargetPos);
+        }
+
     }
 
     float applyThrottleOrBrake(float input)
@@ -206,7 +227,7 @@ public class ShipAI : MonoBehaviour
             if (Vector3.Dot(ship.GetShipTransform().forward, vectorToTarget) > 0)
             {
                 avoidanceVector = Vector3.Reflect((otherShipPosition - transform.position).normalized, otherShipRightVector);
-                forwardAmount = applyThrottleOrBrake(0.3f);
+                forwardAmount = 0.5f;
             }
             else
             {
@@ -248,7 +269,7 @@ public class ShipAI : MonoBehaviour
         Debug.DrawLine(rayOrigin, rayOrigin + rayDirection * rayMaxDistance);
         //Gizmos.DrawWireSphere(rayOrigin + rayDirection * rayMaxDistance, shipDetectionRadius);
 
-        Gizmos.DrawSphere(currentTargetPos, 5f);
+        Gizmos.DrawSphere(currentTargetPos, 1f);
     }
 
 }

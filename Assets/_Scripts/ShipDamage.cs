@@ -22,15 +22,29 @@ public class ShipDamage : MonoBehaviour
             //rb.AddForce(-upwardForceFromCollision, ForceMode.Impulse);
         }
 
-        if(collision.gameObject.CompareTag("Walls") && this.gameObject.CompareTag("AI"))
+        if(collision.gameObject.CompareTag("Walls"))
         {
-            timer += Time.deltaTime;
-
-            if(timer >= 4f)
+            if (gameObject.CompareTag("AI"))
             {
-                transform.GetComponent<ShipAI>().recalculateNeareastWaypoint();
-                Debug.Log("New Waypoint");
-                timer = 0;
+                timer += Time.deltaTime;
+
+                if (timer >= 4f)
+                {
+                    transform.GetComponent<ShipAI>().recalculateNeareastWaypoint();
+                    Debug.Log("New Waypoint");
+                    timer = 0;
+                }
+            }
+        }
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Walls"))
+        {
+            if (gameObject.CompareTag("Player") && rb.velocity.magnitude >= 30f)
+            {
+                CameraShaker.Instance.ShakeNow(3, 0.1f, true);
             }
         }
     }

@@ -25,10 +25,7 @@ public class BoostPad : MonoBehaviour
     {
         if (other.TryGetComponent<VehicleMovement>(out VehicleMovement ship))
         {
-
-
             shipModel = ship.transform.GetChild(0).transform;
-            ship.BoostPad();
 
             other.gameObject.GetComponent<Rigidbody>().AddForce(shipModel.transform.forward *(speedIncrease + ship.GetMaxSpeed() * (0.01f * percentBoost)), ForceMode.VelocityChange);
             Debug.Log("Boosted");

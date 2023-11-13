@@ -10,9 +10,10 @@ public class WaypointNode : MonoBehaviour
 
     public Vector3 getPosition()
     {
-        Vector3 minBound = transform.position + transform.right * 10f;
-        Vector3 maxBound = transform.position - transform.forward * 10f;
+        //Vector3 minBound = transform.position + transform.right * 5f;
+        //Vector3 maxBound = transform.position - transform.forward * 5f;
 
-        return Vector3.Lerp(minBound, maxBound, Random.Range(0, 2));
+        //return Vector3.Lerp(minBound, maxBound, Random.Range(0, 2))
+        return transform.localPosition + Random.insideUnitSphere * 6.5f;
     }
 }

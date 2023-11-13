@@ -12,16 +12,37 @@ public class ShipVisuals : MonoBehaviour
 
     [SerializeField] CinemachineVirtualCamera virtualCamera;
     [SerializeField] AnimationCurve ease;
+    [SerializeField] ParticleSystem speedParticles;
+
+    private bool isPlayer;
+    private VehicleMovement vehicle;
 
     private void Awake()
     {
         cam = Camera.main;
         camStartFOV = cam.fieldOfView;
+
+        isPlayer = gameObject.CompareTag("Player");
+        vehicle = GetComponent<VehicleMovement>();
+    }
+
+    private void Update()
+    {
+        if (!isPlayer) return;
+
+        if(vehicle.GetCurrentSpeed() > 20) 
+        {
+            speedParticles.Play();
+        }
+        else
+        {
+            speedParticles.Stop();
+        }
     }
 
     public void IncreaseFOV(float FOV, float timeToReachDesireFOV)
     {
-        if (gameObject.CompareTag("Player"))
+        if (isPlayer)
         {
             if (virtualCamera.gameObject.activeSelf)
             {
@@ -37,7 +58,7 @@ public class ShipVisuals : MonoBehaviour
 
     public void MegaBoostFOVIncrease(float timeToReachDesireFOV)
     {
-        if (transform.gameObject.CompareTag("Player"))
+        if (isPlayer)
         {
             if (virtualCamera.gameObject.activeSelf)
             {
@@ -52,7 +73,7 @@ public class ShipVisuals : MonoBehaviour
 
     public void ResetFOV(float timeToResetFOV)
     {
-        if (transform.gameObject.CompareTag("Player"))
+        if (isPlayer)
         {
             if (virtualCamera.gameObject.activeSelf)
             {
