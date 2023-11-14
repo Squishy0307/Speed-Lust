@@ -28,7 +28,7 @@ public class CheckpointSingle : MonoBehaviour
         {
             collectedCheckpoint = true;
             Debug.Log("Working");
-            trackCheckpoints.CarThroughCheckpoint(this, other.transform);
+            trackCheckpoints.CarThroughCheckpoint(this, other.gameObject, other.GetComponent<VehicleMovement>().carNumber);
             Debug.Log(other.name);
 
             previousCheckpoint = this.transform;

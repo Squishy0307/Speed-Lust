@@ -7,7 +7,7 @@ public class TrackCheckpoints : MonoBehaviour {
     public event EventHandler OnPlayerCorrectCheckpoint;
     public event EventHandler OnPlayerWrongCheckpoint;
 
-    [SerializeField] private List<Transform> carTransformList;
+    [SerializeField] public List<GameObject> carTransformList;
 
     private List<CheckpointSingle> checkpointSingleList;
     public List<int> nextCheckpointSingleIndexList;
@@ -25,12 +25,31 @@ public class TrackCheckpoints : MonoBehaviour {
         }
 
         nextCheckpointSingleIndexList = new List<int>();
-        foreach (Transform carTransform in carTransformList) {
+        foreach (GameObject carTransform in carTransformList) {
             nextCheckpointSingleIndexList.Add(0);
         }
     }
 
-    public void CarThroughCheckpoint(CheckpointSingle checkpointSingle, Transform carTransform) {
+    public void Start()
+    {
+        setShipPosition();
+    }
+
+    public void Update()
+    {
+
+    }
+
+    public void setShipPosition()
+    {
+        for(int i = 0; i < carTransformList.Count; i++)
+        {
+            carTransformList[i].GetComponent<VehicleMovement>().CarPosition = i + 1;
+            carTransformList[i].GetComponent<VehicleMovement>().carNumber = i;
+        }
+    }
+
+    public void CarThroughCheckpoint(CheckpointSingle checkpointSingle, GameObject carTransform, int carNumber) {
         int nextCheckpointSingleIndex = nextCheckpointSingleIndexList[carTransformList.IndexOf(carTransform)];
         if (checkpointSingleList.IndexOf(checkpointSingle) == nextCheckpointSingleIndex) {
             // Correct checkpoint
@@ -47,9 +66,49 @@ public class TrackCheckpoints : MonoBehaviour {
             OnPlayerWrongCheckpoint?.Invoke(this, EventArgs.Empty);
 
             CheckpointSingle correctCheckpointSingle = checkpointSingleList[nextCheckpointSingleIndex];
-            correctCheckpointSingle.Show();
+            //correctCheckpointSingle.Show();
+
+            
         }
+        comparePositions(carNumber);
     }
 
+
+    public void comparePositions(int carNumber)
+    {
+        if (carTransformList[carNumber].GetComponent<VehicleMovement>().CarPosition > 1)
+        {
+            GameObject currentCar = carTransformList[carNumber];
+            int currentCarPos = currentCar.GetComponent<VehicleMovement>().CarPosition;
+            int currentCarCP = currentCar.GetComponent<VehicleMovement>().checkpointCount;
+
+           // Debug.Log("currentCarCP = " + currentCarCP);
+
+            GameObject carInFront = null;
+            int carInFrontPos = 0;
+            int carInFrontCP = 0;
+
+            for(int i = 0; i < carTransformList.Count; i++)
+            {
+                if (carTransformList[i].GetComponent<VehicleMovement>().CarPosition == currentCarPos - 1)
+                {
+                    carInFront = carTransformList[i];
+                    carInFrontCP = carInFront.GetComponent<VehicleMovement>().checkpointCount;
+                    carInFrontPos = carInFront.GetComponent<VehicleMovement>().CarPosition;
+                    //Debug.Log("carInFrontCP = " + carInFrontCP);
+                    break;
+                }
+            }
+
+            if(currentCarCP > carInFrontCP)
+            {
+                currentCar.GetComponent<VehicleMovement>().CarPosition = currentCarPos - 1;
+                carInFront.GetComponent<VehicleMovement>().CarPosition = carInFrontPos + 1;
+
+                Debug.Log("Car " + carNumber + "has more checkpoints than " + "Car " + carInFront.GetComponent<VehicleMovement>().carNumber);
+
+            }
+        }
+    }
 
 }

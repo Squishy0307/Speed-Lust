@@ -84,7 +84,7 @@ public class ShipAI : MonoBehaviour
             else
             {
                 currentWaypoint = currentWaypoint.nextWaypointNode[Random.Range(0,currentWaypoint.nextWaypointNode.Length)];
-                Debug.Log("new");
+                //Debug.Log("new");
                 FindSetNextTargetPos();
             }
 

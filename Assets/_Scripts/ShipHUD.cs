@@ -18,6 +18,8 @@ public class ShipHUD : MonoBehaviour
 
     private VehicleMovement vehicle;                //Reference to the vehcile script
 
+    public Text positionTracker;
+
 	void Start()
     {
         //We only want to update the UI if the current vehicle is controlled by the player, removing the Canvas HUD will not call the update fn
@@ -58,6 +60,8 @@ public class ShipHUD : MonoBehaviour
         {
             speedText.text =  "0 KPH";
         }
+
+        positionTracker.text = "Pos: " + gameObject.GetComponent<VehicleMovement>().CarPosition.ToString() + " / 2";
     }
 
     //Updates the checkpoints

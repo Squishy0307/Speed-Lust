@@ -45,8 +45,14 @@ public class VehicleMovement : MonoBehaviour
 
     public int checkpointCount;
     public string lapNumber;
-    private Transform nextCheckpoint;
+    public Transform nextCheckpoint;
     private Transform previousCheckpoint;
+    public Transform firstCheckpoint;
+
+    public float distanceToCheckpoint;
+
+    public int carNumber;
+    public int CarPosition;
 
     void Start()
     {
@@ -56,6 +62,8 @@ public class VehicleMovement : MonoBehaviour
         //Calculate the ship's drag value
         drag = driveForce / terminalVelocity;
         startDriveForce = driveForce;
+
+        nextCheckpoint = firstCheckpoint;
 
         if (gameObject.CompareTag("Player")) //Check if current ship is controlled by player or not
         {
@@ -72,6 +80,8 @@ public class VehicleMovement : MonoBehaviour
         //Calculate the forces to be applied to the ship
         CalculatHover();
         CalculatePropulsion();
+
+        distanceToCheckpoint = Vector3.Distance(transform.position, nextCheckpoint.position);
     }
 
     void CalculatHover()
