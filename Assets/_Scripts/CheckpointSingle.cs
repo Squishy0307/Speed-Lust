@@ -9,6 +9,8 @@ public class CheckpointSingle : MonoBehaviour
     public Transform nextCheckpoint;
     private Transform previousCheckpoint;
 
+    public bool collectedCheckpoint = false;
+
     private void Awake()
     {
         meshRenderer = GetComponent<MeshRenderer>();
@@ -21,8 +23,11 @@ public class CheckpointSingle : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if(other.TryGetComponent<ShipController>(out ShipController ship))
+        
+        if(other.TryGetComponent<VehicleMovement>(out VehicleMovement ship) && !collectedCheckpoint)
         {
+            collectedCheckpoint = true;
+            Debug.Log("Working");
             trackCheckpoints.CarThroughCheckpoint(this, other.transform);
             Debug.Log(other.name);
 
@@ -42,6 +47,11 @@ public class CheckpointSingle : MonoBehaviour
             }
         }
 
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        collectedCheckpoint = false;
     }
 
     public void SetTrackCheckpoints(TrackCheckpoints trackCheckpoints)
