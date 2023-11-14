@@ -43,6 +43,11 @@ public class VehicleMovement : MonoBehaviour
     private bool isPlayer = false;
     private bool landEffectsTriggered = false;
 
+    public int checkpointCount;
+    public string lapNumber;
+    private Transform nextCheckpoint;
+    private Transform previousCheckpoint;
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -306,6 +311,12 @@ public class VehicleMovement : MonoBehaviour
     public float GetMaxSpeed()
     {
         return maxSpeed;
+    }
+
+    public void SetCheckPoints(Transform NextCheckpoint, Transform PreviousCheckpoint)
+    {
+        nextCheckpoint = NextCheckpoint;
+        previousCheckpoint = PreviousCheckpoint;
     }
 
 }
