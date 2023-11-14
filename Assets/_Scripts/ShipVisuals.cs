@@ -44,15 +44,7 @@ public class ShipVisuals : MonoBehaviour
     {
         if (isPlayer)
         {
-            if (virtualCamera.gameObject.activeSelf)
-            {
-                DOTween.To(() => virtualCamera.m_Lens.FieldOfView, x => virtualCamera.m_Lens.FieldOfView = x, FOV, timeToReachDesireFOV);
-            }
-
-            else
-            {
-                DOTween.To(() => cam.fieldOfView, x => cam.fieldOfView = x, FOV, timeToReachDesireFOV);
-            }
+            DOTween.To(() => virtualCamera.m_Lens.FieldOfView, x => virtualCamera.m_Lens.FieldOfView = x, FOV, timeToReachDesireFOV);
         }
     }
 
@@ -60,14 +52,7 @@ public class ShipVisuals : MonoBehaviour
     {
         if (isPlayer)
         {
-            if (virtualCamera.gameObject.activeSelf)
-            {
-                DOTween.To(() => virtualCamera.m_Lens.FieldOfView, x => virtualCamera.m_Lens.FieldOfView = x, megaBoostFOV, timeToReachDesireFOV).SetEase(ease);
-            }
-            else
-            {
-                DOTween.To(() => cam.fieldOfView, x => cam.fieldOfView = x, megaBoostFOV, timeToReachDesireFOV);
-            }
+            DOTween.To(() => virtualCamera.m_Lens.FieldOfView, x => virtualCamera.m_Lens.FieldOfView = x, megaBoostFOV, timeToReachDesireFOV).SetEase(ease);
         }
     }
 
@@ -75,14 +60,7 @@ public class ShipVisuals : MonoBehaviour
     {
         if (isPlayer)
         {
-            if (virtualCamera.gameObject.activeSelf)
-            {
-                DOTween.To(() => virtualCamera.m_Lens.FieldOfView, x => virtualCamera.m_Lens.FieldOfView = x, camStartFOV, timeToResetFOV);
-            }
-            else
-            {
-                DOTween.To(() => cam.fieldOfView, x => cam.fieldOfView = x, camStartFOV, timeToResetFOV);
-            }
+            DOTween.To(() => virtualCamera.m_Lens.FieldOfView, x => virtualCamera.m_Lens.FieldOfView = x, camStartFOV, timeToResetFOV);
         }
     }
 }

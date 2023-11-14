@@ -13,6 +13,7 @@ public class VehicleMovement : MonoBehaviour
     public float brakingVelFactor = .95f;   //The percentage of velocty the ship maintains when braking
     public float angleOfRoll = 30f;         //The angle that the ship "banks" into a turn
     public float megaBstSpdIncAmt = 15f;    //The amount of speed boost the ship will get when entering mega boost state
+    public float driftAmount = 20f;         //The amount the ship will drift
 
     [Header("Hover Settings")]
     public float hoverHeight = 1.5f;        //The height the ship maintains when hovering
@@ -184,10 +185,10 @@ public class VehicleMovement : MonoBehaviour
 
         //Calculate the desired amount of friction to apply to the side of the vehicle. This
         //is what keeps the ship from drifting into the walls during turns.
-        Vector3 sideFriction = -transform.right * (sidewaysSpeed / Time.fixedDeltaTime);
+        Vector3 sideFriction = -transform.right * (sidewaysSpeed / Time.fixedDeltaTime/driftAmount);
 
         //Finally, apply the sideways friction
-        if(thruster != 0 && !hitWall)
+        //if(thruster != 0 && !hitWall)
             rb.AddForce(sideFriction, ForceMode.Acceleration);
 
         //If not propelling the ship, slow the ships velocity
