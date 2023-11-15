@@ -12,8 +12,8 @@ public class ShipAI : MonoBehaviour
     WaypointNode currentWaypoint;
     WaypointNode[] allWaypoints;
 
-    [SerializeField] float shipDetectionRadius = 2.5f;
-    [SerializeField] float rayMaxDistance = 5f;
+    [SerializeField] float shipDetectionRadius = 10f;
+    [SerializeField] float rayMaxDistance = 6.08f;
     [SerializeField] LayerMask shipLayer;
     [SerializeField] LayerMask wallLayer;
 
@@ -84,7 +84,6 @@ public class ShipAI : MonoBehaviour
             else
             {
                 currentWaypoint = currentWaypoint.nextWaypointNode[Random.Range(0,currentWaypoint.nextWaypointNode.Length)];
-                Debug.Log("new");
                 FindSetNextTargetPos();
             }
 

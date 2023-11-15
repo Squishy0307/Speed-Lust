@@ -27,7 +27,10 @@ public class VehicleMovement : MonoBehaviour
     public float terminalVelocity = 100f;   //The max speed the ship can go
     public float hoverGravity = 20f;        //The gravity applied to the ship while it is on the ground
     public float fallGravity = 80f;         //The gravity applied to the ship while it is falling
-	
+
+    [Header("Cosmetic Settings")]
+    public AnimationCurve megaBoostHoverCurve;
+
     float drag;                             //The air resistance the ship recieves in the forward direction
     bool isOnGround;                        //A flag determining if the ship is currently on the ground
 
@@ -41,6 +44,8 @@ public class VehicleMovement : MonoBehaviour
     Rigidbody rb;                           //A reference to the ship's rigidbody		
     ShipVisuals shipVisuals;                //A reference to the ShipVisuals script
     private float startDriveForce;
+    private float startHoverHeight;
+    private float startMaxSpeed;
     private bool isPlayer = false;
     private bool landEffectsTriggered = false;
 
@@ -56,7 +61,10 @@ public class VehicleMovement : MonoBehaviour
 
         //Calculate the ship's drag value
         drag = driveForce / terminalVelocity;
+
         startDriveForce = driveForce;
+        startHoverHeight = hoverHeight;
+        startMaxSpeed = maxSpeed;
 
         if (gameObject.CompareTag("Player")) //Check if current ship is controlled by player or not
         {
@@ -267,14 +275,16 @@ public class VehicleMovement : MonoBehaviour
         float newSpeed = driveForce + megaBstSpdIncAmt;
         maxSpeed += megaBstSpdIncAmt;
         DOTween.To(() => driveForce, x => driveForce = x, newSpeed, speedIncreaseRate);
+        DOTween.To(() => hoverHeight, x => hoverHeight = x, hoverHeight + 2.5f, speedIncreaseRate + 3).SetEase(megaBoostHoverCurve);
 
         CameraShaker.Instance.ShakeNow(1.2f, boostDuration,isPlayer);
         shipVisuals.MegaBoostFOVIncrease(speedIncreaseRate);
         yield return new WaitForSeconds(boostDuration);
-        shipVisuals.ResetFOV(speedIncreaseRate);
+        shipVisuals.ResetFOV(4);
 
-        driveForce = startDriveForce;
-        maxSpeed -= megaBstSpdIncAmt;
+        DOTween.To(() => driveForce, x => driveForce = x, startDriveForce, 5);
+        DOTween.To(() => hoverHeight, x => hoverHeight = x, startHoverHeight, 5).SetEase(megaBoostHoverCurve);
+        DOTween.To(() => maxSpeed, x => maxSpeed = x, startMaxSpeed, 7);
     }
 
     public void SetInputs(float Rudder, float Thruster, bool IsBraking)
