@@ -89,7 +89,7 @@ public class ShipVisuals : MonoBehaviour
 
                 shipParts[i].GetComponent<RemoveOnStart>().enabled = true;
 
-                vehicle.GetShipTransform().DOShakePosition(0.3f,0.1f,20,30,false);
+                vehicle.GetShipTransform().DOShakePosition(0.3f,0.12f,30,30,false);
 
                 float t = Random.Range(0.7f, 1.8f);
                 yield return new WaitForSeconds(t);

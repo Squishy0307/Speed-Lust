@@ -8,6 +8,7 @@ public class VehicleMovement : MonoBehaviour
 
     [Header("Drive Settings")]
     public float driveForce = 17f;          //The force that the engine generates
+    public float steerRate = 1f;            //How fast can the ship steer in desierd direction
     public float maxSpeed = 120f;           //Max Speed the ship can go
     public float slowingVelFactor = .99f;   //The percentage of velocity the ship maintains when not thrusting (e.g., a value of .99 means the ship loses 1% velocity when not thrusting)
     public float brakingVelFactor = .95f;   //The percentage of velocty the ship maintains when braking
@@ -173,7 +174,7 @@ public class VehicleMovement : MonoBehaviour
     {
         Vector3 localAngularVelocity = transform.InverseTransformDirection(rb.angularVelocity).normalized * rb.angularVelocity.magnitude;
         //Calculate the yaw torque based on the rudder and current angular velocity
-        float rotationTorque = rudder - localAngularVelocity.y;                                                //rigidBody.angularVelocity.y;
+        float rotationTorque = (rudder * steerRate) - localAngularVelocity.y;                                                //rigidBody.angularVelocity.y;
         //Apply the torque to the ship's Y axis
         rb.AddRelativeTorque(0f, rotationTorque, 0f, ForceMode.VelocityChange);
 
