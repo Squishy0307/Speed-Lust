@@ -15,6 +15,7 @@ public class VehicleMovement : MonoBehaviour
     public float angleOfRoll = 30f;         //The angle that the ship "banks" into a turn
     public float megaBstSpdIncAmt = 15f;    //The amount of speed boost the ship will get when entering mega boost state
     public float driftAmount = 20f;         //The amount the ship will drift
+    public float fallSpeed;
 
     [Header("Hover Settings")]
     public float hoverHeight = 1.5f;        //The height the ship maintains when hovering
@@ -124,6 +125,11 @@ public class VehicleMovement : MonoBehaviour
             {
                 CameraShaker.Instance.ShakeNow(3.5f, 0.1f, isPlayer);
                 landEffectsTriggered = false;
+
+                Vector3 p = Vector3.ProjectOnPlane(transform.forward, groundNormal);
+                Quaternion r = Quaternion.LookRotation(p, groundNormal);
+
+                rb.rotation = r;
             }
 
             Debug.DrawLine(hitInfo.point, hitInfo.point + groundNormal * maxGroundDist, Color.blue);
@@ -207,11 +213,19 @@ public class VehicleMovement : MonoBehaviour
         //by the amount of applied thruster and subtracting the drag amount
         float propulsion = driveForce * thruster - drag * Mathf.Clamp(speed, 0f, terminalVelocity);
 
+        Debug.Log(rb.velocity.y);
+
+        if(rb.velocity.y <= fallSpeed)
+        {
+            rb.velocity = new Vector3(rb.velocity.x,fallSpeed,rb.velocity.z);
+        }
+
         if (GetCurrentSpeed() > maxSpeed)
         {
             rb.velocity *= 0.995f;
             return;
         }
+
 
         rb.AddForce(transform.forward * propulsion, ForceMode.Acceleration);
     }
@@ -226,7 +240,7 @@ public class VehicleMovement : MonoBehaviour
             //...calculate how much upward impulse is generated and then push the vehicle down by that amount 
             //to keep it stuck on the track (instead up popping up over the wall)
             Vector3 upwardForceFromCollision = Vector3.Dot(collision.impulse, transform.up) * transform.up;
-            rb.AddForce(-upwardForceFromCollision, ForceMode.Impulse);
+            //rb.AddForce(-upwardForceFromCollision, ForceMode.Impulse);
 
             Debug.Log("Bounce you DUMDUM");
 
