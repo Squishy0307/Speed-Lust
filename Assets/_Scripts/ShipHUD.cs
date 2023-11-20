@@ -52,9 +52,9 @@ public class ShipHUD : MonoBehaviour
 	}
 
     void UpdateHUD()
-    {      
+    {
         // Convert the speed into KPH by multiplying the value by 3.6f
-        float currentSpd = speed * 30f; //FAKE SPEED
+        float currentSpd = speed;//* 30f; //FAKE SPEED
         if (currentSpd > 0.5f)
         {
             speedText.text = currentSpd.ToString("F0") + " KPH";

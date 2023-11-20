@@ -54,6 +54,8 @@ public class ShipAI : MonoBehaviour
         float reachedTargetDistance = currentWaypoint.minDistanceToReachWaypoint;
         float distanceToTarget = Vector3.Distance(transform.position, targetPosition);
 
+        //Debug.Log(distanceToTarget);
+
         if(distanceToTarget > reachedTargetDistance)
         {
             //Still Too Far, keep going
@@ -69,15 +71,13 @@ public class ShipAI : MonoBehaviour
                 forwardAmount = 1f;
 
                 float stoppingDistance = currentWaypoint.stoppingDistance; //ADD THIS in node so we can manually change slowing speed for each node
-                float stoppingSpeed = 50f;
+                float stoppingSpeed = currentWaypoint.stoppingSpeed; //50
 
                 if(distanceToTarget < stoppingDistance && ship.GetCurrentSpeed() > stoppingSpeed)
                 {
                     //Witting stopping distance and moving forward too fast
-
-
                     //forwardAmount = -1f;
-                    forwardAmount = applyThrottleOrBrake(1);
+                    forwardAmount = 0.5f;
                 }
 
             }
@@ -112,30 +112,34 @@ public class ShipAI : MonoBehaviour
         else
         {
             //TragetReached
-            if (ship.GetCurrentSpeed() > 75f)
+            if (ship.GetCurrentSpeed() > currentWaypoint.stoppingSpeed) //75
             {
-                forwardAmount = -0.5f;
+                forwardAmount = -0.2f;
+                Debug.Log("reached");
             }
+
             else
             {
+                Debug.Log("reached 0");
                 forwardAmount = 0;
                 turnAmount = 0;
+
+                currentWaypoint = currentWaypoint.nextWaypointNode[Random.Range(0, currentWaypoint.nextWaypointNode.Length)];
+                FindSetNextTargetPos();
             }
         }
 
         if ( ship != null )
         {
-            //ship.accel = forwardAmount;
-            //ship.horz = turnAmount;
-            ship.SetInputs(turnAmount, forwardAmount, false);
+            thruster = forwardAmount; //applyThrottleOrBrake(turnAmount);
+            rudder = turnAmount;
+
+            ship.SetInputs(rudder, thruster, false);
         }
         else
         {
             Debug.LogError("Add Ship Controller Component to this object!");
         }
-
-        thruster = forwardAmount;
-        rudder = turnAmount;
     }
 
     void FindSetNextTargetPos()
@@ -226,7 +230,7 @@ public class ShipAI : MonoBehaviour
             if (Vector3.Dot(ship.GetShipTransform().forward, vectorToTarget) > 0)
             {
                 avoidanceVector = Vector3.Reflect((otherShipPosition - transform.position).normalized, otherShipRightVector);
-                forwardAmount = 0.5f;
+                forwardAmount = 0f;
             }
             else
             {
@@ -266,9 +270,9 @@ public class ShipAI : MonoBehaviour
     {
         Gizmos.color = Color.cyan;
         Debug.DrawLine(rayOrigin, rayOrigin + rayDirection * rayMaxDistance);
-        //Gizmos.DrawWireSphere(rayOrigin + rayDirection * rayMaxDistance, shipDetectionRadius);
+        Gizmos.DrawWireSphere(rayOrigin + rayDirection * rayMaxDistance, shipDetectionRadius);
 
-        Gizmos.DrawSphere(currentTargetPos, 1f);
+        //Gizmos.DrawSphere(currentTargetPos, 1f);
     }
 
 }
