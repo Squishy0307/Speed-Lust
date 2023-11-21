@@ -8,12 +8,14 @@ public class VehicleMovement : MonoBehaviour
 
     [Header("Drive Settings")]
     public float driveForce = 17f;          //The force that the engine generates
+    public float steerRate = 1f;            //How fast can the ship steer in desierd direction
     public float maxSpeed = 120f;           //Max Speed the ship can go
     public float slowingVelFactor = .99f;   //The percentage of velocity the ship maintains when not thrusting (e.g., a value of .99 means the ship loses 1% velocity when not thrusting)
     public float brakingVelFactor = .95f;   //The percentage of velocty the ship maintains when braking
     public float angleOfRoll = 30f;         //The angle that the ship "banks" into a turn
     public float megaBstSpdIncAmt = 15f;    //The amount of speed boost the ship will get when entering mega boost state
     public float driftAmount = 20f;         //The amount the ship will drift
+    public float fallSpeed;
 
     [Header("Hover Settings")]
     public float hoverHeight = 1.5f;        //The height the ship maintains when hovering
@@ -27,7 +29,10 @@ public class VehicleMovement : MonoBehaviour
     public float terminalVelocity = 100f;   //The max speed the ship can go
     public float hoverGravity = 20f;        //The gravity applied to the ship while it is on the ground
     public float fallGravity = 80f;         //The gravity applied to the ship while it is falling
-	
+
+    [Header("Cosmetic Settings")]
+    public AnimationCurve megaBoostHoverCurve;
+
     float drag;                             //The air resistance the ship recieves in the forward direction
     bool isOnGround;                        //A flag determining if the ship is currently on the ground
 
@@ -41,8 +46,11 @@ public class VehicleMovement : MonoBehaviour
     Rigidbody rb;                           //A reference to the ship's rigidbody		
     ShipVisuals shipVisuals;                //A reference to the ShipVisuals script
     private float startDriveForce;
+    private float startHoverHeight;
+    private float startMaxSpeed;
     private bool isPlayer = false;
     private bool landEffectsTriggered = false;
+    private float bounceDir = 1;
 
     public int checkpointCount;
     public string lapNumber;
@@ -62,7 +70,10 @@ public class VehicleMovement : MonoBehaviour
 
         //Calculate the ship's drag value
         drag = driveForce / terminalVelocity;
+
         startDriveForce = driveForce;
+        startHoverHeight = hoverHeight;
+        startMaxSpeed = maxSpeed;
 
         nextCheckpoint = firstCheckpoint;
 
@@ -125,9 +136,14 @@ public class VehicleMovement : MonoBehaviour
             {
                 CameraShaker.Instance.ShakeNow(3.5f, 0.1f, isPlayer);
                 landEffectsTriggered = false;
+
+                Vector3 p = Vector3.ProjectOnPlane(transform.forward, groundNormal);
+                Quaternion r = Quaternion.LookRotation(p, groundNormal);
+
+                rb.rotation = r;
             }
 
-            Debug.DrawLine(hitInfo.point, hitInfo.point + groundNormal * maxGroundDist, Color.blue);
+            //Debug.DrawLine(hitInfo.point, hitInfo.point + groundNormal * maxGroundDist, Color.blue);
         }
         else
         {
@@ -175,7 +191,7 @@ public class VehicleMovement : MonoBehaviour
     {
         Vector3 localAngularVelocity = transform.InverseTransformDirection(rb.angularVelocity).normalized * rb.angularVelocity.magnitude;
         //Calculate the yaw torque based on the rudder and current angular velocity
-        float rotationTorque = rudder - localAngularVelocity.y;                                                //rigidBody.angularVelocity.y;
+        float rotationTorque = (rudder * steerRate) - localAngularVelocity.y;                                                //rigidBody.angularVelocity.y;
         //Apply the torque to the ship's Y axis
         rb.AddRelativeTorque(0f, rotationTorque, 0f, ForceMode.VelocityChange);
 
@@ -188,8 +204,13 @@ public class VehicleMovement : MonoBehaviour
         Vector3 sideFriction = -transform.right * (sidewaysSpeed / Time.fixedDeltaTime/driftAmount);
 
         //Finally, apply the sideways friction
-        //if(thruster != 0 && !hitWall)
+        if(!hitWall)
             rb.AddForce(sideFriction, ForceMode.Acceleration);
+        else
+        {
+            rb.AddForce(-sideFriction, ForceMode.Acceleration);
+            rb.AddRelativeTorque(0f, bounceDir * 1.25f, 0f, ForceMode.VelocityChange);
+        }
 
         //If not propelling the ship, slow the ships velocity
         if (thruster <= 0f)
@@ -208,52 +229,56 @@ public class VehicleMovement : MonoBehaviour
         //by the amount of applied thruster and subtracting the drag amount
         float propulsion = driveForce * thruster - drag * Mathf.Clamp(speed, 0f, terminalVelocity);
 
+        if(rb.velocity.y <= fallSpeed)
+        {
+            rb.velocity = new Vector3(rb.velocity.x,fallSpeed,rb.velocity.z);
+        }
+
         if (GetCurrentSpeed() > maxSpeed)
         {
             rb.velocity *= 0.995f;
             return;
         }
 
+
         rb.AddForce(transform.forward * propulsion, ForceMode.Acceleration);
     }
 
-    void OnCollisionStay(Collision collision)
+    void OnCollisionEnter(Collision collision)
     {
         //If the ship has collided with an object on the Wall layer...
         if (collision.gameObject.layer == LayerMask.NameToLayer("Walls"))
         {
-            //StartCoroutine(GotHitByWall());
+            if(!hitWall)
+                StartCoroutine(GotHitByWall());
 
             //...calculate how much upward impulse is generated and then push the vehicle down by that amount 
             //to keep it stuck on the track (instead up popping up over the wall)
             Vector3 upwardForceFromCollision = Vector3.Dot(collision.impulse, transform.up) * transform.up;
-            rb.AddForce(-upwardForceFromCollision, ForceMode.Impulse);
+            //rb.AddForce(-upwardForceFromCollision, ForceMode.Impulse);
 
             Debug.Log("Bounce you DUMDUM");
 
             //bounce off wall
-            //float dir = 1;
-            //if (collision.contacts[0].normal.z > 0)
-            //{
-            //    dir = -1;
-            //}
-            //rb.AddForce(transform.right * dir * bounceForce, ForceMode.Impulse);
+            
+            if (collision.contacts[0].normal.z > 0)
+            {
+                bounceDir = -1;
+            }
+            else
+            {
+                bounceDir = 1;
+            }
 
-            //Vector3 localAngularVelocity = transform.InverseTransformDirection(rb.angularVelocity).normalized * rb.angularVelocity.magnitude;
-            //float rotationTorque = dir - localAngularVelocity.y;                                                 
-            //rb.AddRelativeTorque(0f, -rotationTorque * bounceForce * 10, 0f, ForceMode.Impulse);
-
+            rb.AddForce(transform.right * bounceDir * bounceForce, ForceMode.Impulse);
         }
 
     }
     IEnumerator GotHitByWall()
     {
-        if (!hitWall)
-        {
-            hitWall = true;
-            yield return new WaitForSeconds(0.25f);
-            hitWall = false;
-        }
+        hitWall = true;
+        yield return new WaitForSeconds(0.25f);
+        hitWall = false;
     }
 
     public bool CanControlVehicle()
@@ -277,14 +302,16 @@ public class VehicleMovement : MonoBehaviour
         float newSpeed = driveForce + megaBstSpdIncAmt;
         maxSpeed += megaBstSpdIncAmt;
         DOTween.To(() => driveForce, x => driveForce = x, newSpeed, speedIncreaseRate);
+        //DOTween.To(() => hoverHeight, x => hoverHeight = x, hoverHeight + 2.5f, speedIncreaseRate + 3).SetEase(megaBoostHoverCurve);
 
         CameraShaker.Instance.ShakeNow(1.2f, boostDuration,isPlayer);
         shipVisuals.MegaBoostFOVIncrease(speedIncreaseRate);
         yield return new WaitForSeconds(boostDuration);
-        shipVisuals.ResetFOV(speedIncreaseRate);
+        shipVisuals.ResetFOV(4);
 
-        driveForce = startDriveForce;
-        maxSpeed -= megaBstSpdIncAmt;
+        DOTween.To(() => driveForce, x => driveForce = x, startDriveForce, 5);
+        //DOTween.To(() => hoverHeight, x => hoverHeight = x, startHoverHeight, 5).SetEase(megaBoostHoverCurve);
+        DOTween.To(() => maxSpeed, x => maxSpeed = x, startMaxSpeed, 7);
     }
 
     public void SetInputs(float Rudder, float Thruster, bool IsBraking)

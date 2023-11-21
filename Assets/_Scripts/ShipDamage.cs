@@ -44,7 +44,7 @@ public class ShipDamage : MonoBehaviour
         {
             if (gameObject.CompareTag("Player") && rb.velocity.magnitude >= 30f)
             {
-                CameraShaker.Instance.ShakeNow(3, 0.1f, true);
+                CameraShaker.Instance.ShakeNow(2, 0.1f, true);
             }
         }
     }

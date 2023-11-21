@@ -1,4 +1,5 @@
 using UnityEngine;
+using Cinemachine;
 
 public class Player_Input : MonoBehaviour
 {
@@ -11,10 +12,17 @@ public class Player_Input : MonoBehaviour
     private bool isBraking;                             //The current brake value
 
     private VehicleMovement vehicalMovement;
+    [SerializeField] CinemachineVirtualCamera cam;
+    [SerializeField] float camSmooth = 1f;
+    [SerializeField] AnimationCurve camSmoothEase;
+    CinemachineTransposer transposer;
+    CinemachineComposer composer;
 
     private void Awake()
     {
         vehicalMovement = GetComponent<VehicleMovement>();
+        transposer = cam.GetCinemachineComponent<CinemachineTransposer>();
+        composer = cam.GetCinemachineComponent<CinemachineComposer>();
     }
 
     void Update()
@@ -26,5 +34,16 @@ public class Player_Input : MonoBehaviour
         rudder = Input.GetAxis(horizontalAxisName);
         isBraking = Input.GetButton(brakingKey);
         vehicalMovement.SetInputs(rudder,thruster,isBraking);
+
+        if (vehicalMovement.GetCurrentSpeed() >= 60)
+        {
+            transposer.m_FollowOffset.x = Mathf.Lerp(transposer.m_FollowOffset.x, rudder, Time.deltaTime * camSmooth);
+            composer.m_TrackedObjectOffset.x = Mathf.Lerp(composer.m_TrackedObjectOffset.x, rudder, camSmoothEase.Evaluate(Time.deltaTime * camSmooth));
+        }
+        else
+        {
+            transposer.m_FollowOffset.x = Mathf.Lerp(transposer.m_FollowOffset.x, 0, Time.deltaTime * camSmooth);
+            composer.m_TrackedObjectOffset.x = Mathf.Lerp(composer.m_TrackedObjectOffset.x, 0, camSmoothEase.Evaluate(Time.deltaTime * camSmooth));
+        }
     }
 }

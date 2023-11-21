@@ -8,12 +8,6 @@ public class RemoveOnStart : MonoBehaviour
 
 	void Start()
     {
-        if(destroyDelay == 0.0f) Destroy(this.gameObject);
+        Destroy(this.gameObject,destroyDelay);
 	}
-
-    void Update()
-    {
-        destroyDelay -= Time.deltaTime;
-        if (destroyDelay <= 0.0f) Destroy(this.gameObject);
-    }
 }
