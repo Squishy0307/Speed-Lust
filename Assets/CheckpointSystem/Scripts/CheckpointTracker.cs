@@ -13,8 +13,9 @@ public class CheckpointTracker : MonoBehaviour
     private Checkpoints script_checkpoints = null;
     private Leaderboard script_leaderboard = null;
     private TextMeshPro tmpro = null;
+    public bool collectedCheckpoint = false;
 
-    
+
     // Start is called before the first frame update
     void Start()
     {
@@ -46,7 +47,7 @@ public class CheckpointTracker : MonoBehaviour
     {
         if (script_checkpoints != null)
         {
-            if (other.CompareTag("Checkpoint") == true)
+            if (other.CompareTag("Checkpoint") == true && !collectedCheckpoint)
             {
                 //have to first pass finish line to start racing
                 if (other.name == "chk (0)")
@@ -62,6 +63,7 @@ public class CheckpointTracker : MonoBehaviour
                 //count checkpoints passed
                 checkpoint_name = script_checkpoints.GetNextCheckpointName(checkpoint_name);
                 checkpoints_passed += 1;
+                collectedCheckpoint = true;
                 if (script_leaderboard != null)
                 {
                     int position = script_leaderboard.DoLeaderboard(DriverName);
@@ -78,6 +80,11 @@ public class CheckpointTracker : MonoBehaviour
                 }
             }
         }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        collectedCheckpoint = false;
     }
 
     private string GenerateName()
