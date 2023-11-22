@@ -1,18 +1,22 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class Timer : MonoBehaviour
 {
-    private float startTime;
-    private float elapsedTime;
-    private bool hasStartedLap = false;
+    public float startTime;
+    public float elapsedTime;
+    public bool hasStartedLap = false;
+    public bool hasEnteredCheckpoint = false;
 
     public GameObject lapText;
     public GameObject prevLapText;
     public GameObject bestLap;
     public List<float> bestTimes = new List<float>();
+
+    public CheckpointTracker tracker;
 
     // Start is called before the first frame update
     void Start()
@@ -35,16 +39,18 @@ public class Timer : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player") && !hasEnteredCheckpoint)
         {
+            hasEnteredCheckpoint = true;
+            prevLapText.GetComponent<Text>().text = "Last Lap: " + elapsedTime.ToString("00:00:00");
             hasStartedLap = true;
             startTime = Time.time;
 
-            prevLapText.GetComponent<Text>().text = "Last Lap: " + elapsedTime.ToString("00:00:00");
+            
 
-            if (other.name == "chk (60)")
+            if (elapsedTime >= 1 && tracker.finishLinePass>=1)
             {
-
+                Debug.Log("Working");
                 bestTimes.Add(elapsedTime);
 
             }
@@ -53,9 +59,14 @@ public class Timer : MonoBehaviour
             {
 
                 bestTimes.Sort();
-                bestLap.GetComponent<Text>().text = "Best Lap: " + bestTimes[0].ToString();
+                bestLap.GetComponent<Text>().text = "Best Lap: " + bestTimes[0].ToString("00:00:00");
 
             }
         }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        hasEnteredCheckpoint = false;
     }
 }

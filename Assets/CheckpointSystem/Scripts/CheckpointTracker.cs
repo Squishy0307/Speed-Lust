@@ -54,6 +54,8 @@ public class CheckpointTracker : MonoBehaviour
                 {
                     finishLinePass += 1;
                     checkpoint_name = other.name;
+
+
                 }
 
                 //didnt get to finish line yet no counting
