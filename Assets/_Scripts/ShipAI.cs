@@ -12,8 +12,8 @@ public class ShipAI : MonoBehaviour
     WaypointNode currentWaypoint;
     WaypointNode[] allWaypoints;
 
-    [SerializeField] float shipDetectionRadius = 2.5f;
-    [SerializeField] float rayMaxDistance = 5f;
+    [SerializeField] float shipDetectionRadius = 10f;
+    [SerializeField] float rayMaxDistance = 6.08f;
     [SerializeField] LayerMask shipLayer;
     [SerializeField] LayerMask wallLayer;
 
@@ -34,7 +34,7 @@ public class ShipAI : MonoBehaviour
     void Awake()
     {
         ship = GetComponent<VehicleMovement>();
-        allWaypoints = FindObjectsOfType<WaypointNode>(); 
+        allWaypoints = FindObjectsOfType<WaypointNode>();
     }
 
     private void Start()
@@ -47,14 +47,16 @@ public class ShipAI : MonoBehaviour
     {
         //TO DO: Add respawn is the ship velosity stays almost same for more than few seconds 
         //       Control the pitch of the ship based on ground normal
-    
+
         float turnAmount = 0f;
-       
+
 
         float reachedTargetDistance = currentWaypoint.minDistanceToReachWaypoint;
         float distanceToTarget = Vector3.Distance(transform.position, targetPosition);
 
-        if(distanceToTarget > reachedTargetDistance)
+        //Debug.Log(distanceToTarget);
+
+        if (distanceToTarget > reachedTargetDistance)
         {
             //Still Too Far, keep going
 
@@ -69,31 +71,28 @@ public class ShipAI : MonoBehaviour
                 forwardAmount = 1f;
 
                 float stoppingDistance = currentWaypoint.stoppingDistance; //ADD THIS in node so we can manually change slowing speed for each node
-                float stoppingSpeed = 50f;
+                float stoppingSpeed = currentWaypoint.stoppingSpeed; //50
 
-                if(distanceToTarget < stoppingDistance && ship.GetCurrentSpeed() > stoppingSpeed)
+                if (distanceToTarget < stoppingDistance && ship.GetCurrentSpeed() > stoppingSpeed)
                 {
                     //Witting stopping distance and moving forward too fast
-
-
                     //forwardAmount = -1f;
-                    forwardAmount = applyThrottleOrBrake(1);
+                    forwardAmount = 0.5f;
                 }
 
             }
             else
             {
-                currentWaypoint = currentWaypoint.nextWaypointNode[Random.Range(0,currentWaypoint.nextWaypointNode.Length)];
-                //Debug.Log("new");
+                currentWaypoint = currentWaypoint.nextWaypointNode[Random.Range(0, currentWaypoint.nextWaypointNode.Length)];
                 FindSetNextTargetPos();
             }
 
-            AvoidAiShips(dirToMove,out dirToMove);
+            AvoidAiShips(dirToMove, out dirToMove);
 
             //Turning ship
             //gets an angle to make the ship turn (value is positive if target is to right and negative if target is on left)
             float angleToDirection = Vector3.SignedAngle(ship.GetShipTransform().forward, dirToMove, ship.GetShipTransform().up);
-            lastDirection = Mathf.Lerp(lastDirection,angleToDirection,Time.deltaTime * 4.5f);
+            lastDirection = Mathf.Lerp(lastDirection, angleToDirection, Time.deltaTime * 4.5f);
             //Debug.Log(angleToDirection);
 
             if (lastDirection > 2)
@@ -113,30 +112,34 @@ public class ShipAI : MonoBehaviour
         else
         {
             //TragetReached
-            if (ship.GetCurrentSpeed() > 75f)
+            if (ship.GetCurrentSpeed() > currentWaypoint.stoppingSpeed) //75
             {
-                forwardAmount = -0.5f;
+                forwardAmount = -0.2f;
+                Debug.Log("reached");
             }
+
             else
             {
+                Debug.Log("reached 0");
                 forwardAmount = 0;
                 turnAmount = 0;
+
+                currentWaypoint = currentWaypoint.nextWaypointNode[Random.Range(0, currentWaypoint.nextWaypointNode.Length)];
+                FindSetNextTargetPos();
             }
         }
 
-        if ( ship != null )
+        if (ship != null)
         {
-            //ship.accel = forwardAmount;
-            //ship.horz = turnAmount;
-            ship.SetInputs(turnAmount, forwardAmount, false);
+            thruster = forwardAmount; //applyThrottleOrBrake(turnAmount);
+            rudder = turnAmount;
+
+            ship.SetInputs(rudder, thruster, false);
         }
         else
         {
             Debug.LogError("Add Ship Controller Component to this object!");
         }
-
-        thruster = forwardAmount;
-        rudder = turnAmount;
     }
 
     void FindSetNextTargetPos()
@@ -166,7 +169,7 @@ public class ShipAI : MonoBehaviour
 
     WaypointNode FindClosestWaypoint()
     {
-        return allWaypoints.OrderBy(t => Vector3.Distance(transform.position,t.transform.position)).FirstOrDefault();
+        return allWaypoints.OrderBy(t => Vector3.Distance(transform.position, t.transform.position)).FirstOrDefault();
     }
 
     public void SetTargetPosition(Vector3 targetPosition)
@@ -220,14 +223,14 @@ public class ShipAI : MonoBehaviour
 
     void AvoidAiShips(Vector3 vectorToTarget, out Vector3 newVectorToTarget)
     {
-        if(IsShipInFrontOfThisAI(out Vector3 otherShipPosition, out Vector3 otherShipRightVector, out Vector3 otherShipLeftVector))
+        if (IsShipInFrontOfThisAI(out Vector3 otherShipPosition, out Vector3 otherShipRightVector, out Vector3 otherShipLeftVector))
         {
             Vector3 avoidanceVector = Vector3.zero;
 
             if (Vector3.Dot(ship.GetShipTransform().forward, vectorToTarget) > 0)
             {
                 avoidanceVector = Vector3.Reflect((otherShipPosition - transform.position).normalized, otherShipRightVector);
-                forwardAmount = 0.5f;
+                forwardAmount = 0f;
             }
             else
             {
@@ -239,7 +242,7 @@ public class ShipAI : MonoBehaviour
             //We want to be able to control how much desire the AI has to drive towards the waypoint vs avoid the other ships.
             //As we get closer to the waypoint the desire to reach waypoint increases.
             float driveToTargetInfluence = 6 / distanceToTarget;
-            
+
             //Ensure that we limit the value to between 30% and 100% as we always want the AI to desire to reach the waypoint.
             driveToTargetInfluence = Mathf.Clamp(driveToTargetInfluence, 0.30f, 1.0f);
 
@@ -267,9 +270,9 @@ public class ShipAI : MonoBehaviour
     {
         Gizmos.color = Color.cyan;
         Debug.DrawLine(rayOrigin, rayOrigin + rayDirection * rayMaxDistance);
-        //Gizmos.DrawWireSphere(rayOrigin + rayDirection * rayMaxDistance, shipDetectionRadius);
+        Gizmos.DrawWireSphere(rayOrigin + rayDirection * rayMaxDistance, shipDetectionRadius);
 
-        Gizmos.DrawSphere(currentTargetPos, 1f);
+        //Gizmos.DrawSphere(currentTargetPos, 1f);
     }
 
 }

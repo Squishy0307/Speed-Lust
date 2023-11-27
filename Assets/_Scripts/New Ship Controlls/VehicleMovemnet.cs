@@ -1,4 +1,5 @@
 using DG.Tweening;
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -247,7 +248,7 @@ public class VehicleMovement : MonoBehaviour
     void OnCollisionEnter(Collision collision)
     {
         //If the ship has collided with an object on the Wall layer...
-        if (collision.gameObject.layer == LayerMask.NameToLayer("Walls"))
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Walls") && GetCurrentSpeed() >= 40f)
         {
             if(!hitWall)
                 StartCoroutine(GotHitByWall());
@@ -260,16 +261,11 @@ public class VehicleMovement : MonoBehaviour
             Debug.Log("Bounce you DUMDUM");
 
             //bounce off wall
-            
-            if (collision.contacts[0].normal.z > 0)
-            {
-                bounceDir = -1;
-            }
-            else
-            {
-                bounceDir = 1;
-            }
 
+            float d = Vector3.Dot(transform.right, collision.contacts[0].normal);
+
+            bounceDir = MathF.Sign(d);
+    
             rb.AddForce(transform.right * bounceDir * bounceForce, ForceMode.Impulse);
         }
 
