@@ -66,6 +66,8 @@ public class VehicleMovement : MonoBehaviour
 
     private StartCountdown startCountdown;
 
+    public bool canControl = true;
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -99,9 +101,18 @@ public class VehicleMovement : MonoBehaviour
 
         distanceToCheckpoint = Vector3.Distance(transform.position, nextCheckpoint.position);
 
-        if(!startCountdown.timerStarted)
+        if(canControl)
         {
             CalculatePropulsion();
+        }
+
+        if(startCountdown.timerStarted)
+        {
+            canControl = false;
+        }
+        else
+        {
+            canControl= true;
         }
     }
 
@@ -292,7 +303,13 @@ public class VehicleMovement : MonoBehaviour
             return false;
         }
 
+        if(!canControl)
+        {
+            return false;
+        }
+
         return true;
+        
     }
 
 
