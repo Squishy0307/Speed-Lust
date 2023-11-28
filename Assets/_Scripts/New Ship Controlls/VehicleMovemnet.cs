@@ -64,10 +64,13 @@ public class VehicleMovement : MonoBehaviour
     public int carNumber;
     public int CarPosition;
 
+    private StartCountdown startCountdown;
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         shipVisuals = GetComponent<ShipVisuals>();
+        startCountdown = FindAnyObjectByType<StartCountdown>();
 
         //Calculate the ship's drag value
         drag = driveForce / terminalVelocity;
@@ -92,9 +95,14 @@ public class VehicleMovement : MonoBehaviour
 
         //Calculate the forces to be applied to the ship
         CalculatHover();
-        CalculatePropulsion();
+        
 
         distanceToCheckpoint = Vector3.Distance(transform.position, nextCheckpoint.position);
+
+        if(!startCountdown.timerStarted)
+        {
+            CalculatePropulsion();
+        }
     }
 
     void CalculatHover()
