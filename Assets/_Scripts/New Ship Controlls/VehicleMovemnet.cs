@@ -237,7 +237,7 @@ public class VehicleMovement : MonoBehaviour
 
         if (GetCurrentSpeed() > maxSpeed)
         {
-            rb.velocity *= 0.995f;
+            rb.velocity *= 0.997f;
             return;
         }
 
