@@ -54,5 +54,6 @@ public class StartCountdown : MonoBehaviour
         countdown.SetActive(false);
         timerStarted = false;
         // do something...
+        GameManager.Instance.RaceStarted = true;
     }
 }

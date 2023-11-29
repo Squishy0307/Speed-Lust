@@ -115,12 +115,10 @@ public class ShipAI : MonoBehaviour
             if (ship.GetCurrentSpeed() > currentWaypoint.stoppingSpeed) //75
             {
                 forwardAmount = -0.2f;
-                Debug.Log("reached");
             }
 
             else
             {
-                Debug.Log("reached 0");
                 forwardAmount = 0;
                 turnAmount = 0;
 

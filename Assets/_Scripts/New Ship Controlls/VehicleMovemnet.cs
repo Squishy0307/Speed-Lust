@@ -64,13 +64,10 @@ public class VehicleMovement : MonoBehaviour
     public int carNumber;
     public int CarPosition;
 
-    private StartCountdown startCountdown;
-
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         shipVisuals = GetComponent<ShipVisuals>();
-        startCountdown = FindAnyObjectByType<StartCountdown>();
 
         //Calculate the ship's drag value
         drag = driveForce / terminalVelocity;
@@ -251,26 +248,43 @@ public class VehicleMovement : MonoBehaviour
     void OnCollisionEnter(Collision collision)
     {
         //If the ship has collided with an object on the Wall layer...
-        if (collision.gameObject.layer == LayerMask.NameToLayer("Walls") && GetCurrentSpeed() >= 40f)
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Walls"))
         {
-            if(!hitWall)
-                StartCoroutine(GotHitByWall());
+            if (GetCurrentSpeed() >= 40f) {
 
-            //...calculate how much upward impulse is generated and then push the vehicle down by that amount 
-            //to keep it stuck on the track (instead up popping up over the wall)
-            //Vector3 upwardForceFromCollision = Vector3.Dot(collision.impulse, transform.up) * transform.up;
-            //rb.AddForce(-upwardForceFromCollision, ForceMode.Impulse);
+                if (!hitWall)
+                    StartCoroutine(GotHitByWall());
+
+                //...calculate how much upward impulse is generated and then push the vehicle down by that amount 
+                //to keep it stuck on the track (instead up popping up over the wall)
+                //Vector3 upwardForceFromCollision = Vector3.Dot(collision.impulse, transform.up) * transform.up;
+                //rb.AddForce(-upwardForceFromCollision, ForceMode.Impulse);
 
 
-            //bounce off wall
-            float d = Vector3.Dot(transform.right, collision.contacts[0].normal);
-
-            bounceDir = MathF.Sign(d);
-    
-            rb.AddForce(transform.right * bounceDir * bounceForce, ForceMode.Impulse);
+                //bounce off wall
+                bounce(collision.contacts[0].normal, bounceForce);
+            }
         }
 
+        if(collision.gameObject.layer == LayerMask.NameToLayer("Ship"))
+        {
+
+            if (!hitWall)
+                StartCoroutine(GotHitByWall());
+
+            bounce(collision.contacts[0].normal, bounceForce/2);
+        }
     }
+
+    void bounce(Vector3 collisionNormal, float bounceForce)
+    {
+        float d = Vector3.Dot(transform.right, collisionNormal);
+
+        bounceDir = MathF.Sign(d);
+
+        rb.AddForce(transform.right * bounceDir * bounceForce, ForceMode.Impulse);
+    }
+
     IEnumerator GotHitByWall()
     {
         hitWall = true;
@@ -280,7 +294,7 @@ public class VehicleMovement : MonoBehaviour
 
     public bool CanControlVehicle()
     {
-        if (hitWall || startCountdown.timerStarted)
+        if (hitWall || !GameManager.Instance.RaceStarted)
         {
             return false;
         }

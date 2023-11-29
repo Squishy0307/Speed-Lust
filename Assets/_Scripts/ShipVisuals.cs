@@ -90,7 +90,8 @@ public class ShipVisuals : MonoBehaviour
                 rb.AddForce(-shipParts[i].transform.right * 40f, ForceMode.Impulse);
                 rb.AddForce(-shipParts[i].transform.up * 50f, ForceMode.Impulse);
 
-                shipParts[i].GetComponent<RemoveOnStart>().enabled = true;
+                Destroy(shipParts[i],3);
+                //shipParts[i].GetComponent<RemoveOnStart>().enabled = true;
 
                 vehicle.GetShipTransform().DOShakePosition(0.3f,0.12f,30,30,false);
 
@@ -116,11 +117,12 @@ public class ShipVisuals : MonoBehaviour
                 }
                 else
                 {
-                    Destroy(transform.GetChild(i).gameObject);
+                    transform.GetChild(i).gameObject.SetActive(false);
                 }
             }
 
-            ShipComponents comp = transform.GetChild(0).GetComponent<ShipComponents>();
+            ShipComponents comp = transform.GetChild(shipID).GetComponent<ShipComponents>();
+            Debug.Log(comp);
 
             shipModel = comp.ShipBody.transform;
             vehicle.shipBody = shipModel;
