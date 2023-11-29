@@ -46,4 +46,5 @@ public class Player_Input : MonoBehaviour
             composer.m_TrackedObjectOffset.x = Mathf.Lerp(composer.m_TrackedObjectOffset.x, 0, camSmoothEase.Evaluate(Time.deltaTime * camSmooth));
         }
     }
+
 }

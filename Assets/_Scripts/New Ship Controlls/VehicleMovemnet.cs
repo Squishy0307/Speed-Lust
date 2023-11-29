@@ -66,8 +66,6 @@ public class VehicleMovement : MonoBehaviour
 
     private StartCountdown startCountdown;
 
-    public bool canControl = true;
-
     void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -97,23 +95,9 @@ public class VehicleMovement : MonoBehaviour
 
         //Calculate the forces to be applied to the ship
         CalculatHover();
-        
+        CalculatePropulsion();
 
         distanceToCheckpoint = Vector3.Distance(transform.position, nextCheckpoint.position);
-
-        if(canControl)
-        {
-            CalculatePropulsion();
-        }
-
-        if(startCountdown.timerStarted)
-        {
-            canControl = false;
-        }
-        else
-        {
-            canControl= true;
-        }
     }
 
     void CalculatHover()
@@ -274,13 +258,11 @@ public class VehicleMovement : MonoBehaviour
 
             //...calculate how much upward impulse is generated and then push the vehicle down by that amount 
             //to keep it stuck on the track (instead up popping up over the wall)
-            Vector3 upwardForceFromCollision = Vector3.Dot(collision.impulse, transform.up) * transform.up;
+            //Vector3 upwardForceFromCollision = Vector3.Dot(collision.impulse, transform.up) * transform.up;
             //rb.AddForce(-upwardForceFromCollision, ForceMode.Impulse);
 
-            Debug.Log("Bounce you DUMDUM");
 
             //bounce off wall
-
             float d = Vector3.Dot(transform.right, collision.contacts[0].normal);
 
             bounceDir = MathF.Sign(d);
@@ -298,12 +280,7 @@ public class VehicleMovement : MonoBehaviour
 
     public bool CanControlVehicle()
     {
-        if (hitWall)
-        {
-            return false;
-        }
-
-        if(!canControl)
+        if (hitWall || startCountdown.timerStarted)
         {
             return false;
         }

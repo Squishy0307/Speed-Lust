@@ -76,5 +76,9 @@ public class ShipSelector : MonoBehaviour
         shipName.text = currentShip.name;
     }
 
+    public int GetSelectedShip()
+    {
+        return currentShipIndex;
+    }
 
 }

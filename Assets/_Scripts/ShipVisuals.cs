@@ -20,6 +20,7 @@ public class ShipVisuals : MonoBehaviour
     private bool isPlayer;
     private bool isBreaking = false;
     private VehicleMovement vehicle;
+    
 
     private void Awake()
     {
@@ -28,6 +29,8 @@ public class ShipVisuals : MonoBehaviour
 
         isPlayer = gameObject.CompareTag("Player");
         vehicle = GetComponent<VehicleMovement>();
+
+        setupShip();
     }
 
     private void Update()
@@ -94,6 +97,41 @@ public class ShipVisuals : MonoBehaviour
                 float t = Random.Range(0.7f, 1.8f);
                 yield return new WaitForSeconds(t);
             }
+        }
+    }
+
+    void setupShip()
+    {
+        if(ShipSelector.Instance == null) return;
+
+        if (isPlayer)
+        {
+            int shipID = ShipSelector.Instance.GetSelectedShip();
+
+            for (int i = 0; i < transform.childCount; i++)
+            {
+                if (i == shipID)
+                {
+                    transform.GetChild(i).gameObject.SetActive(true);
+                }
+                else
+                {
+                    Destroy(transform.GetChild(i).gameObject);
+                }
+            }
+
+            ShipComponents comp = transform.GetChild(0).GetComponent<ShipComponents>();
+
+            shipModel = comp.ShipBody.transform;
+            vehicle.shipBody = shipModel;
+
+            shipParts = new GameObject[comp.shipParts.Length];
+
+            for (int i = 0; i < shipParts.Length; i++)
+            {
+                shipParts[i] = comp.shipParts[i];
+            }
+
         }
     }
 }
