@@ -14,7 +14,7 @@ public class ShipHUD : MonoBehaviour
     
     private int checkpointCount;                    //Total Checkpoints the vehicle has went through
     private Transform nextCheckpoint;               //Next checkpoint 
-    public Transform previousCheckpoint;           //Previous checkpoint ------------[SET PRIVATE LATER]------------
+    private Transform previousCheckpoint;           //Previous checkpoint ------------[SET PRIVATE LATER]------------
 
     private VehicleMovement vehicle;                //Reference to the vehcile script
 
