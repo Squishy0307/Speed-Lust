@@ -46,7 +46,6 @@ public class Scene_Manager : MonoBehaviour
         while (!operation.isDone)
         {
             float progress = Mathf.Clamp01(operation.progress / 0.9f);
-            Debug.Log(progress);
             yield return null;
         }
 
