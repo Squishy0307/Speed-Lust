@@ -20,7 +20,8 @@ public class ShipVisuals : MonoBehaviour
     private bool isPlayer;
     private bool isBreaking = false;
     private VehicleMovement vehicle;
-    
+
+    private int shipID;
 
     private void Awake()
     {
@@ -103,11 +104,11 @@ public class ShipVisuals : MonoBehaviour
 
     void setupShip()
     {
-        if(ShipSelector.Instance == null) return;
+        if(ShipSelector.Instance == null && isPlayer) return;
 
         if (isPlayer)
         {
-            int shipID = ShipSelector.Instance.GetSelectedShip();
+            shipID = ShipSelector.Instance.GetSelectedShip();
 
             for (int i = 0; i < transform.childCount; i++)
             {
@@ -120,20 +121,31 @@ public class ShipVisuals : MonoBehaviour
                     transform.GetChild(i).gameObject.SetActive(false);
                 }
             }
-
-            ShipComponents comp = transform.GetChild(shipID).GetComponent<ShipComponents>();
-            Debug.Log(comp);
-
-            shipModel = comp.ShipBody.transform;
-            vehicle.shipBody = shipModel;
-
-            shipParts = new GameObject[comp.shipParts.Length];
-
-            for (int i = 0; i < shipParts.Length; i++)
-            {
-                shipParts[i] = comp.shipParts[i];
-            }
-
         }
+
+        else
+        {
+            for (int i = 0; i < transform.childCount; i++)
+            {
+                if (transform.GetChild(i).gameObject.activeSelf)
+                {
+                    shipID = i;
+                }
+            }
+        }
+
+        ShipComponents comp = transform.GetChild(shipID).GetComponent<ShipComponents>();
+
+        shipModel = comp.ShipBody.transform;
+        vehicle.shipBody = shipModel;
+
+        shipParts = new GameObject[comp.shipParts.Length];
+
+        for (int i = 0; i < shipParts.Length; i++)
+        {
+            shipParts[i] = comp.shipParts[i];
+        }
+
     }
 }
+

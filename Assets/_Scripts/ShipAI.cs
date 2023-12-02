@@ -112,14 +112,17 @@ public class ShipAI : MonoBehaviour
         else
         {
             //TragetReached
-            if (ship.GetCurrentSpeed() > currentWaypoint.stoppingSpeed) //75
+            if (currentWaypoint.SlowDownOnThisPoint)
             {
-                forwardAmount = -0.2f;
+                if (ship.GetCurrentSpeed() > currentWaypoint.stoppingSpeed) //75
+                {
+                    forwardAmount = applyThrottleOrBrake(turnAmount); //-0.2
+                }
             }
 
             else
             {
-                forwardAmount = 0;
+                forwardAmount = 1f;
                 turnAmount = 0;
 
                 currentWaypoint = currentWaypoint.nextWaypointNode[Random.Range(0, currentWaypoint.nextWaypointNode.Length)];
@@ -228,7 +231,7 @@ public class ShipAI : MonoBehaviour
             if (Vector3.Dot(ship.GetShipTransform().forward, vectorToTarget) > 0)
             {
                 avoidanceVector = Vector3.Reflect((otherShipPosition - transform.position).normalized, otherShipRightVector);
-                forwardAmount = 0f;
+                forwardAmount = 0.7f;
             }
             else
             {
