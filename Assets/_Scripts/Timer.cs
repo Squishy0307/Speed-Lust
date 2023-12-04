@@ -18,16 +18,18 @@ public class Timer : MonoBehaviour
 
     public CheckpointTracker tracker;
 
+    private StartCountdown startCountdown;
+
     // Start is called before the first frame update
     void Start()
     {
-        
+        startCountdown = FindObjectOfType<StartCountdown>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (hasStartedLap)
+        if (hasStartedLap && !startCountdown.timerStarted)
         {
 
             elapsedTime = Time.time - startTime;
@@ -39,7 +41,7 @@ public class Timer : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player") && !hasEnteredCheckpoint)
+        if (other.CompareTag("Player") && !hasEnteredCheckpoint && !startCountdown.timerStarted)
         {
             hasEnteredCheckpoint = true;
             prevLapText.GetComponent<Text>().text = "Last Lap: " + elapsedTime.ToString("00:00:00");
