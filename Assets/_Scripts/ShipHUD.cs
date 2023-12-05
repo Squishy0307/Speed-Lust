@@ -34,7 +34,7 @@ public class ShipHUD : MonoBehaviour
         {
             if (child.gameObject.name == "Speed")
             {
-                speedText = child.GetComponent<TextMeshProUGUI>();
+                //speedText = child.GetComponent<TextMeshProUGUI>();
             }
         }
     }
