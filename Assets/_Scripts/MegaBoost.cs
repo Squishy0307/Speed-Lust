@@ -39,6 +39,8 @@ public class MegaBoost : MonoBehaviour
                 //TO-DO: HIDE ALL UI 
 
                 vehicle.MegaBoostInitiated(boostDuration, speedIncreaseRate);
+
+                AudioManager.Instance.Play("boost");
             }
         }
     }
