@@ -284,8 +284,8 @@ public class VehicleMovement : MonoBehaviour
 
         rb.AddForce(transform.right * bounceDir * bounceForce, ForceMode.Impulse);
 
-        if(isPlayer)
-            AudioManager.Instance.Play("bounce");
+       // if(isPlayer)
+            //AudioManager.Instance.Play("bounce");
     }
 
     IEnumerator GotHitByWall()

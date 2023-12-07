@@ -28,7 +28,7 @@ public class Checkpoints : MonoBehaviour
 
         int CurrentNumber = ExtractNumberFromString(CurrentCheckpointName);
         int NextNumber = (CurrentNumber + 1 > chk.Count - 1) ? 0 : CurrentNumber + 1;
-        string NextCheckpointName = string.Format("chk ({0})", NextNumber);
+        string NextCheckpointName = string.Format("Instance-0", NextNumber);
         return NextCheckpointName;
     }
 }

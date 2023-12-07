@@ -20,7 +20,7 @@ public class CheckpointTracker : MonoBehaviour
     void Start()
     {
         GameObject go = null;
-        go = GameObject.Find("Checkpoints");
+        go = GameObject.Find("CheckpointsSpline");
         if (go != null)
             script_checkpoints = go.GetComponent<Checkpoints>();
         go = GameObject.Find("Leaderboard");
@@ -49,8 +49,9 @@ public class CheckpointTracker : MonoBehaviour
         {
             if (other.CompareTag("Checkpoint") == true && !collectedCheckpoint)
             {
+                Debug.Log("Working");
                 //have to first pass finish line to start racing
-                if (other.name == "chk (0)")
+                if (other.name == "Instance-0")
                 {
                     finishLinePass += 1;
                     checkpoint_name = other.name;
