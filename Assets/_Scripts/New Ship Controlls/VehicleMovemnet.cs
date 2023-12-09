@@ -53,6 +53,7 @@ public class VehicleMovement : MonoBehaviour
     private bool landEffectsTriggered = false;
     private float bounceDir = 1;
 
+    
     public int checkpointCount;
     public string lapNumber;
     public Transform nextCheckpoint;

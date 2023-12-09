@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class Timer : MonoBehaviour
 {
@@ -11,9 +12,9 @@ public class Timer : MonoBehaviour
     public bool hasStartedLap = false;
     public bool hasEnteredCheckpoint = false;
 
-    public GameObject lapText;
-    public GameObject prevLapText;
-    public GameObject bestLap;
+    public TextMeshProUGUI lapText;
+    public TextMeshProUGUI prevLapText;
+    public TextMeshProUGUI bestLap;
     public List<float> bestTimes = new List<float>();
 
     public CheckpointTracker tracker;
@@ -35,7 +36,7 @@ public class Timer : MonoBehaviour
             elapsedTime = Time.time - startTime;
             //Debug.Log(elapsedTime);
 
-            lapText.GetComponent<Text>().text = "Lap Time: " + elapsedTime.ToString("00:00:00");
+            lapText.text = "Lap Time: " + elapsedTime.ToString("00:00:00");
         }
     }
 
@@ -44,7 +45,7 @@ public class Timer : MonoBehaviour
         if (other.CompareTag("Player") && !hasEnteredCheckpoint && !startCountdown.timerStarted)
         {
             hasEnteredCheckpoint = true;
-            prevLapText.GetComponent<Text>().text = "Last Lap: " + elapsedTime.ToString("00:00:00");
+            prevLapText.text = "Last Lap: " + elapsedTime.ToString("00:00:00");
             hasStartedLap = true;
             startTime = Time.time;
 
@@ -52,7 +53,7 @@ public class Timer : MonoBehaviour
 
             if (elapsedTime >= 1 && tracker.finishLinePass>=1)
             {
-                Debug.Log("Working");
+                //Debug.Log("Working");
                 bestTimes.Add(elapsedTime);
 
             }
@@ -61,7 +62,7 @@ public class Timer : MonoBehaviour
             {
 
                 bestTimes.Sort();
-                bestLap.GetComponent<Text>().text = "Best Lap: " + bestTimes[0].ToString("00:00:00");
+                bestLap.text = "Best Lap: " + bestTimes[0].ToString("00:00:00");
 
             }
         }

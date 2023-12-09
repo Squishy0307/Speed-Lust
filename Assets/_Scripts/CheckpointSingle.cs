@@ -27,7 +27,7 @@ public class CheckpointSingle : MonoBehaviour
         if(other.TryGetComponent<VehicleMovement>(out VehicleMovement ship) && !collectedCheckpoint)
         {
             collectedCheckpoint = true;
-            Debug.Log("Working");
+            //Debug.Log("Working");
             trackCheckpoints.CarThroughCheckpoint(this, other.gameObject, other.GetComponent<VehicleMovement>().carNumber);
             Debug.Log(other.name);
 

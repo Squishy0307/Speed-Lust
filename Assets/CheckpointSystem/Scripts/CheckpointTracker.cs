@@ -9,12 +9,12 @@ public class CheckpointTracker : MonoBehaviour
     public int checkpoints_passed = 0;
     public int finishLinePass = 0;
     private bool isRightDirection;
-    private string checkpoint_name = "";
+    public string checkpoint_name = "";
     private Checkpoints script_checkpoints = null;
     private Leaderboard script_leaderboard = null;
     private TextMeshPro tmpro = null;
     public bool collectedCheckpoint = false;
-
+    public Checkpoints chk;
 
     // Start is called before the first frame update
     void Start()
@@ -47,16 +47,18 @@ public class CheckpointTracker : MonoBehaviour
     {
         if (script_checkpoints != null)
         {
-            if (other.CompareTag("Checkpoint") == true && !collectedCheckpoint)
+            if (other.CompareTag("Checkpoint") == true && other.transform == gameObject.GetComponent<VehicleMovement>().nextCheckpoint.transform)
             {
                 Debug.Log("Working");
+                chk.GetNextCheckpoint();
+
                 //have to first pass finish line to start racing
                 if (other.name == "Instance-0")
                 {
                     finishLinePass += 1;
                     checkpoint_name = other.name;
 
-
+                    
                 }
 
                 //didnt get to finish line yet no counting
@@ -65,6 +67,7 @@ public class CheckpointTracker : MonoBehaviour
 
                 //count checkpoints passed
                 checkpoint_name = script_checkpoints.GetNextCheckpointName(checkpoint_name);
+                GetComponent<VehicleMovement>().nextCheckpoint = chk.gameObject.transform.Find(checkpoint_name);
                 checkpoints_passed += 1;
                 collectedCheckpoint = true;
                 if (script_leaderboard != null)
