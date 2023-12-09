@@ -24,21 +24,22 @@ public class MegaBoost : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.TryGetComponent(out VehicleMovement vehicle))
+        if (other.TryGetComponent(out CheckpointTracker checkpoint))
         {
 
-            if (vehicle.lapNumber == "Lap 2" && vehicle.CompareTag("Player"))
+            if (checkpoint.finishLinePass == 2 && checkpoint.CompareTag("Player"))
             {
                 StartCoroutine(enableEffects());
             }
 
-            else if (vehicle.lapNumber == "Lap 3")
+            else if (checkpoint.finishLinePass == 3)
             {
                 Debug.Log("<b><color=green> MEGA BOOST!!</color></b>");
 
                 //TO-DO: HIDE ALL UI 
 
-                vehicle.MegaBoostInitiated(boostDuration, speedIncreaseRate);
+                VehicleMovement ship = other.GetComponent<VehicleMovement>();
+                ship.MegaBoostInitiated(boostDuration, speedIncreaseRate);
 
                 AudioManager.Instance.Play("boost");
             }
