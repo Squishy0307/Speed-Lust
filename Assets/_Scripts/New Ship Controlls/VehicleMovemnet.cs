@@ -367,6 +367,11 @@ public class VehicleMovement : MonoBehaviour
         return maxSpeed;
     }
 
+    public bool IsGrounded()
+    {
+        return isOnGround;
+    }
+
     public void SetCheckPoints(Transform NextCheckpoint, Transform PreviousCheckpoint)
     {
         nextCheckpoint = NextCheckpoint;

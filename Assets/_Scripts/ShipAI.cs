@@ -133,7 +133,9 @@ public class ShipAI : MonoBehaviour
         if (ship != null)
         {
             thruster = forwardAmount; //applyThrottleOrBrake(turnAmount);
-            rudder = turnAmount;
+            if(ship.IsGrounded())
+                rudder = turnAmount;
+            else rudder = turnAmount/2;
 
             ship.SetInputs(rudder, thruster, false);
         }
@@ -273,7 +275,7 @@ public class ShipAI : MonoBehaviour
         Debug.DrawLine(rayOrigin, rayOrigin + rayDirection * rayMaxDistance);
         Gizmos.DrawWireSphere(rayOrigin + rayDirection * rayMaxDistance, shipDetectionRadius);
 
-        //Gizmos.DrawSphere(currentTargetPos, 1f);
+        Gizmos.DrawSphere(currentTargetPos, 1f);
     }
 
 }

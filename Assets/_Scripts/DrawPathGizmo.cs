@@ -11,6 +11,21 @@ public class DrawPathGizmo : MonoBehaviour
     public Transform transformRootObject;
     WaypointNode[] waypointNodes;
 
+    private void Awake()
+    {
+        //for (int i = 0; i < transformRootObject.childCount; i++)
+        //{
+        //    WaypointNode w = transformRootObject.GetChild(i).GetComponent<WaypointNode>();
+        //    int p = i + 1;
+        //    if(p >= transformRootObject.childCount)
+        //    {
+        //        p = 0;
+        //    }
+        //    w.nextWaypointNode[0] = transformRootObject.GetChild(p).GetComponent<WaypointNode>();
+        //}
+    }
+
+
     void OnDrawGizmos()
     {      
 
