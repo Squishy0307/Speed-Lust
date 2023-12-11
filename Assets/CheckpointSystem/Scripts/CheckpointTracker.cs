@@ -50,7 +50,12 @@ public class CheckpointTracker : MonoBehaviour
             if (other.CompareTag("Checkpoint") == true && other.transform == gameObject.GetComponent<VehicleMovement>().nextCheckpoint.transform)
             {
                 Debug.Log("Working");
-                chk.GetNextCheckpoint();
+
+                if(gameObject.name == "Player SHIP")
+                {
+                    chk.GetNextCheckpoint();
+                }
+                
 
                 //have to first pass finish line to start racing
                 if (other.name == "Instance-0")
@@ -67,8 +72,8 @@ public class CheckpointTracker : MonoBehaviour
 
                 //count checkpoints passed
                 checkpoint_name = script_checkpoints.GetNextCheckpointName(checkpoint_name);
-                GetComponent<VehicleMovement>().nextCheckpoint = chk.gameObject.transform.Find(checkpoint_name);
-                checkpoints_passed += 1;
+                gameObject.GetComponent<VehicleMovement>().nextCheckpoint = chk.gameObject.transform.Find(checkpoint_name);
+                checkpoints_passed ++;
                 collectedCheckpoint = true;
                 if (script_leaderboard != null)
                 {
