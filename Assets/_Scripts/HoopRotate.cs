@@ -6,6 +6,8 @@ public class HoopRotate : MonoBehaviour
 {
     public float speed;
 
+    public Vector3 RotationDirection;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -15,6 +17,6 @@ public class HoopRotate : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        transform.Rotate(new Vector3(0,0,1), 1 * speed * Time.deltaTime);
+        transform.Rotate(RotationDirection, 1 * speed * Time.deltaTime);
     }
 }

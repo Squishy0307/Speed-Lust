@@ -4,6 +4,7 @@ using System.Globalization;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System;
 
 public class Timer : MonoBehaviour
 {
@@ -36,7 +37,8 @@ public class Timer : MonoBehaviour
             elapsedTime = Time.time - startTime;
             //Debug.Log(elapsedTime);
 
-            lapText.text = "Lap Time: " + elapsedTime.ToString("00:00:00");
+
+            lapText.text = FormatSeconds(elapsedTime);
         }
     }
 
@@ -45,7 +47,7 @@ public class Timer : MonoBehaviour
         if (other.CompareTag("Player") && !hasEnteredCheckpoint && !startCountdown.timerStarted)
         {
             hasEnteredCheckpoint = true;
-            prevLapText.text = "Last Lap: " + elapsedTime.ToString("00:00:00");
+            prevLapText.text = "Last Lap: " + elapsedTime.ToString("00:00");
             hasStartedLap = true;
             startTime = Time.time;
 
@@ -62,7 +64,7 @@ public class Timer : MonoBehaviour
             {
 
                 bestTimes.Sort();
-                bestLap.text = "Best Lap: " + bestTimes[0].ToString("00:00:00");
+                bestLap.text = "Best Lap: " + bestTimes[0].ToString("00:00");
 
             }
         }
@@ -71,5 +73,14 @@ public class Timer : MonoBehaviour
     private void OnTriggerExit(Collider other)
     {
         hasEnteredCheckpoint = false;
+    }
+
+    string FormatSeconds(float elapsed)
+    {
+        int d = (int)(elapsed * 100.0f);
+        int minutes = d / (60 * 100);
+        int seconds = (d % (60 * 100)) / 100;
+        int hundredths = d % 100;
+        return String.Format("Lap Time: " + "{0:00}:{1:00}.{2:00}", minutes, seconds, hundredths);
     }
 }
