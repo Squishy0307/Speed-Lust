@@ -12,6 +12,7 @@ public class MegaBoost : MonoBehaviour
     [SerializeField] private Material orangeRingMat;
 
     private bool EffectsEnabled = false;
+    private bool testBoost = false;
 
     private void Start()
     {
@@ -20,6 +21,20 @@ public class MegaBoost : MonoBehaviour
         innerRingMat.SetFloat("_Speed", 0);
 
         portalMat.SetFloat("_InnerFade", 1f);
+    }
+
+    private void Update()
+    {
+        if(Input.GetKey(KeyCode.F10) && Input.GetKey(KeyCode.F11))
+        {
+            orangeRingMat.SetFloat("_Speed", 1);
+            outerRingMat.SetFloat("_Speed", 0.5f);
+            innerRingMat.SetFloat("_Speed", 0.5f);
+
+            portalMat.SetFloat("_InnerFade", 0.67f);
+
+            testBoost = true;
+        }
     }
 
     private void OnTriggerEnter(Collider other)
@@ -42,6 +57,12 @@ public class MegaBoost : MonoBehaviour
                 ship.MegaBoostInitiated(boostDuration, speedIncreaseRate);
 
                 AudioManager.Instance.Play("boost");
+            }
+
+            if(testBoost)
+            {
+                VehicleMovement ship = other.GetComponent<VehicleMovement>();
+                ship.MegaBoostInitiated(boostDuration, speedIncreaseRate);
             }
         }
     }

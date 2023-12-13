@@ -92,7 +92,14 @@ public class ShipAI : MonoBehaviour
             //Turning ship
             //gets an angle to make the ship turn (value is positive if target is to right and negative if target is on left)
             float angleToDirection = Vector3.SignedAngle(ship.GetShipTransform().forward, dirToMove, ship.GetShipTransform().up);
-            lastDirection = Mathf.Lerp(lastDirection, angleToDirection, Time.deltaTime * 4.5f);
+            if (ship.IsGrounded())
+            {
+                lastDirection = Mathf.Lerp(lastDirection, angleToDirection, Time.deltaTime * 4.5f);
+            }
+            else
+            {
+                lastDirection = angleToDirection;
+            }
             //Debug.Log(angleToDirection);
 
             if (lastDirection > 2)
@@ -135,7 +142,7 @@ public class ShipAI : MonoBehaviour
             thruster = forwardAmount; //applyThrottleOrBrake(turnAmount);
             if(ship.IsGrounded())
                 rudder = turnAmount;
-            else rudder = turnAmount/2;
+            else rudder = turnAmount;
 
             ship.SetInputs(rudder, thruster, false);
         }
