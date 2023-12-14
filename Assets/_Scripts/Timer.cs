@@ -31,7 +31,7 @@ public class Timer : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (hasStartedLap && !startCountdown.timerStarted)
+        if (hasStartedLap && !startCountdown.timerStarted && GameManager.Instance.RaceStarted)
         {
 
             elapsedTime = Time.time - startTime;

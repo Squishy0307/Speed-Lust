@@ -15,10 +15,12 @@ public class CheckpointTracker : MonoBehaviour
     private TextMeshPro tmpro = null;
     public bool collectedCheckpoint = false;
     public Checkpoints chk;
+    public GameObject Buttons;
 
     // Start is called before the first frame update
     void Start()
     {
+        Buttons.SetActive(false);
         GameObject go = null;
         go = GameObject.Find("CheckpointsSpline");
         if (go != null)
@@ -63,6 +65,10 @@ public class CheckpointTracker : MonoBehaviour
                     finishLinePass += 1;
                     checkpoint_name = other.name;
 
+                    if(finishLinePass >= 2)
+                    {
+                        EndRace();
+                    }
                     
                 }
 
@@ -102,7 +108,7 @@ public class CheckpointTracker : MonoBehaviour
     {
         int len = Random.Range(3, 5);
         System.Random r = new System.Random();
-        string[] consonants = { "b", "c", "d", "f", "g", "h", "j", "k", "l", "m", "l", "n", "p", "q", "r", "s", "sh", "zh", "t", "v", "w", "x" };
+        string[] consonants = { "b", "c", "d", "f", "g", "h", "j", "k", "l", "m", "l", "n", "p", "q", "r", "s", "t", "v", "w", "x" };
         string[] vowels = { "a", "e", "i", "o", "u", "ae", "y" };
         string Name = "";
         Name += consonants[r.Next(consonants.Length)].ToUpper();
@@ -125,5 +131,11 @@ public class CheckpointTracker : MonoBehaviour
         return Name;
 
 
+    }
+
+    public void EndRace()
+    {
+        GameManager.Instance.RaceStarted = false;
+        Buttons.SetActive(true);
     }
 }
