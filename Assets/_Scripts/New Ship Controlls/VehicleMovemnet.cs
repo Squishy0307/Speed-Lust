@@ -49,7 +49,7 @@ public class VehicleMovement : MonoBehaviour
     private float startDriveForce;
     private float startHoverHeight;
     private float startMaxSpeed;
-    private bool isPlayer = false;
+    public bool isPlayer = false; // hi josh here, just made this public so BoostPad could reference it. lmk if there's a better way to do that lol
     private bool landEffectsTriggered = false;
     private float bounceDir = 1;
 
@@ -285,8 +285,8 @@ public class VehicleMovement : MonoBehaviour
 
         rb.AddForce(transform.right * bounceDir * bounceForce, ForceMode.Impulse);
 
-       // if(isPlayer)
-            //AudioManager.Instance.Play("bounce");
+        if (isPlayer)
+            AudioManager.Instance.Play("bounce", 0.8f, 1.2f);
     }
 
     IEnumerator GotHitByWall()

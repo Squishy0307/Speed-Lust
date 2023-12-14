@@ -51,7 +51,7 @@ public class CheckpointTracker : MonoBehaviour
         {
             if (other.CompareTag("Checkpoint") == true && other.transform == gameObject.GetComponent<VehicleMovement>().nextCheckpoint.transform)
             {
-                Debug.Log("Working");
+                //Debug.Log("Working");
 
                 if(gameObject.name == "Player SHIP")
                 {

@@ -11,12 +11,13 @@ public class StartCountdown : MonoBehaviour
     public float currentTime = 0;
     public float startingTime = 3;
     public bool timerStarted = false;
+    public GameObject MusicDude;
 
     void Start()
     {
         countdown.SetActive(false);
         currentTime = startingTime;
-        StartCoroutine(Countdown(3));
+        StartCoroutine(Countdown(Mathf.FloorToInt(startingTime)));
     }
 
     public void Update()
@@ -38,7 +39,9 @@ public class StartCountdown : MonoBehaviour
 
             // display something...
             countdown.SetActive(true);
-            
+
+            if (count == 3)
+                AudioManager.Instance.Play("countdown", 1, 1);
 
             yield return new WaitForSeconds(1);
             count--;
@@ -55,5 +58,6 @@ public class StartCountdown : MonoBehaviour
         timerStarted = false;
         // do something...
         GameManager.Instance.RaceStarted = true;
+        MusicDude.SetActive(true);
     }
 }

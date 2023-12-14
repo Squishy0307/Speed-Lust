@@ -57,11 +57,11 @@ public class ShipHUD : MonoBehaviour
         float currentSpd = speed * 3.6f;//* 30f; //FAKE SPEED
         if (currentSpd > 0.5f)
         {
-            speedText.text = currentSpd.ToString("F0") + " KPH";
+            speedText.text = currentSpd.ToString("F0") + "\nKPH";
         }
         else
         {
-            speedText.text =  "0 KPH";
+            speedText.text =  "0\nKPH";
         }
     }
 
