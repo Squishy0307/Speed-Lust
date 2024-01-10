@@ -23,6 +23,9 @@ public class ShipVisuals : MonoBehaviour
 
     private int shipID;
 
+    [Header("VFX")]
+    [SerializeField] GameObject sparks;
+
     private void Awake()
     {
         cam = Camera.main;
@@ -146,6 +149,13 @@ public class ShipVisuals : MonoBehaviour
             shipParts[i] = comp.shipParts[i];
         }
 
+    }
+
+    public void SpawnSparks(Vector3 pos, Vector3 rot)
+    {
+        GameObject s = Instantiate(sparks, pos, Quaternion.Euler(rot));
+        s.transform.parent = transform;
+        Destroy(s, 1f);
     }
 }
 

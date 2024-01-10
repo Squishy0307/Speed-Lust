@@ -251,6 +251,8 @@ public class VehicleMovement : MonoBehaviour
         //If the ship has collided with an object on the Wall layer...
         if (collision.gameObject.layer == LayerMask.NameToLayer("Walls"))
         {
+            shipVisuals.SpawnSparks(collision.contacts[0].point, collision.contacts[0].normal);
+
             if (GetCurrentSpeed() >= 40f) {
 
                 if (!hitWall)
@@ -269,6 +271,7 @@ public class VehicleMovement : MonoBehaviour
 
         if(collision.gameObject.layer == LayerMask.NameToLayer("Ship"))
         {
+            shipVisuals.SpawnSparks(collision.contacts[0].point, collision.contacts[0].normal);
 
             if (!hitWall)
                 StartCoroutine(GotHitByWall());
