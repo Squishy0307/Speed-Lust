@@ -9,6 +9,7 @@ public class SpeedHUD : MonoBehaviour
     private VehicleMovement vehicleMovement;
     public GameObject player;
     public Slider speedSlider;
+    public ShipHUD playerSpeed;
 
     // Start is called before the first frame update
     void Start()
@@ -19,6 +20,6 @@ public class SpeedHUD : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        speedSlider.value = vehicleMovement.speed;
+        speedSlider.value = playerSpeed.currentSpd;
     }
 }

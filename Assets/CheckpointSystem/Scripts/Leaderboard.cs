@@ -3,6 +3,7 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 using TMPro;
+using UnityEngine.UIElements;
 
 public class Leaderboard : MonoBehaviour
 {
@@ -10,6 +11,8 @@ public class Leaderboard : MonoBehaviour
     private TextMeshProUGUI tmpro = null;
     private StringBuilder sb = new StringBuilder();
     private string focuscar = "";
+    public TextMeshProUGUI playerPosition;
+    public CheckpointTracker player;
 
     private void Start()
     {
@@ -28,6 +31,11 @@ public class Leaderboard : MonoBehaviour
                // focuscar = car[car.Count - 1].DriverName;
         }
 
+    }
+
+    private void Update()
+    {
+        playerPosition.text = player.position + "/8";
     }
 
     public int DoLeaderboard(string DriverName)

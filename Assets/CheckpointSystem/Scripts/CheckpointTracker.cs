@@ -16,6 +16,8 @@ public class CheckpointTracker : MonoBehaviour
     public bool collectedCheckpoint = false;
     public Checkpoints chk;
     public GameObject Buttons;
+    public int position;
+    public TextMeshProUGUI positionText;
 
     // Start is called before the first frame update
     void Start()
@@ -37,6 +39,7 @@ public class CheckpointTracker : MonoBehaviour
 
             
         }
+        position = 8;
     }
 
     // Update is called once per frame
@@ -83,7 +86,7 @@ public class CheckpointTracker : MonoBehaviour
                 collectedCheckpoint = true;
                 if (script_leaderboard != null)
                 {
-                    int position = script_leaderboard.DoLeaderboard(DriverName);
+                    position = script_leaderboard.DoLeaderboard(DriverName);
                     if (position > -1)
                     {
                         //tmpro.text = string.Format("{0} {1}", position, DriverName);
@@ -92,7 +95,7 @@ public class CheckpointTracker : MonoBehaviour
                     else
                     {
                         tmpro.text = DriverName;
-                        
+                        //positionText.text = "Pos " + position + " : 8";
                     }
                 }
             }

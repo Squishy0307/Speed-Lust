@@ -7,7 +7,7 @@ using TMPro;
 public class ShipHUD : MonoBehaviour
 {
     [SerializeField] private Canvas HUD;            //Canvas 
-    [SerializeField] TextMeshProUGUI speedText;     //UI text element to show current speed
+    public TextMeshProUGUI speedText;     //UI text element to show current speed
 
     private float speed;                            //Current Speed of the vehical
     private int currentLap;                         //Current Lap of the vehicle
@@ -17,6 +17,8 @@ public class ShipHUD : MonoBehaviour
     private Transform previousCheckpoint;           //Previous checkpoint ------------[SET PRIVATE LATER]------------
 
     private VehicleMovement vehicle;                //Reference to the vehcile script
+
+    public float currentSpd;
 
 	void Start()
     {
@@ -54,7 +56,7 @@ public class ShipHUD : MonoBehaviour
     void UpdateHUD()
     {
         // Convert the speed into KPH by multiplying the value by 3.6f
-        float currentSpd = speed * 3.6f;//* 30f; //FAKE SPEED
+        currentSpd = speed * 3.6f;//* 30f; //FAKE SPEED
         if (currentSpd > 0.5f)
         {
             speedText.text = currentSpd.ToString("F0") + "\nKPH";
