@@ -18,10 +18,17 @@ public class CheckpointTracker : MonoBehaviour
     public GameObject Buttons;
     public int position;
     public TextMeshProUGUI positionText;
+    public Timer timer;
+    public float elapsedTime;
+    public string elapsedTimeDisplay;
+    public float startTime;
+    private StartCountdown startCountdown;
+    public string Name;
 
     // Start is called before the first frame update
     void Start()
     {
+        startCountdown = FindObjectOfType<StartCountdown>();
         Buttons.SetActive(false);
         GameObject go = null;
         go = GameObject.Find("CheckpointsSpline");
@@ -45,7 +52,13 @@ public class CheckpointTracker : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (finishLinePass >= 1)
+        {
+
+            elapsedTime = Time.time - startTime;
+            elapsedTimeDisplay = elapsedTime.ToString("0:00".PadLeft(18 - Name.Length));
+            //Debug.Log(elapsedTime);
+        }
     }
 
     private void OnTriggerEnter(Collider other)
@@ -113,7 +126,7 @@ public class CheckpointTracker : MonoBehaviour
         System.Random r = new System.Random();
         string[] consonants = { "b", "c", "d", "f", "g", "h", "j", "k", "l", "m", "l", "n", "p", "q", "r", "s", "t", "v", "w", "x" };
         string[] vowels = { "a", "e", "i", "o", "u", "ae", "y" };
-        string Name = "";
+        //string Name = "";
         Name += consonants[r.Next(consonants.Length)].ToUpper();
         Name += vowels[r.Next(vowels.Length)];
         int b = 2; //b tells how many times a new letter has been added. It's 2 right now because the first two letters are already in the name.
@@ -127,7 +140,7 @@ public class CheckpointTracker : MonoBehaviour
 
         if (gameObject.CompareTag("Player"))
         {
-            Name = "<color=red>Player</color>";
+            Name = "Player";
             //GetComponent<TextMeshProUGUI>().color = new Color(1, 0, 0);
         }
 

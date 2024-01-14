@@ -7,7 +7,7 @@ using UnityEngine.UIElements;
 
 public class Leaderboard : MonoBehaviour
 {
-    private List<CheckpointTracker> car = new List<CheckpointTracker>();
+    public List<CheckpointTracker> car = new List<CheckpointTracker>();
     private TextMeshProUGUI tmpro = null;
     private StringBuilder sb = new StringBuilder();
     private string focuscar = "";
@@ -50,14 +50,20 @@ public class Leaderboard : MonoBehaviour
         for (int i = 0; i < car.Count; i++)
         {
             if (car[i].DriverName == focuscar)
-                sb.AppendLine(string.Format("{0} {1} <--", i + 1, car[i].DriverName));
+                sb.AppendLine(string.Format("{0} {1} <-- ", i + 1, car[i].DriverName+ car[i].elapsedTimeDisplay));
             else
-                sb.AppendLine(string.Format("{0} {1}", i + 1, car[i].DriverName));
+                sb.AppendLine(string.Format("{0} {1}", i + 1, car[i].DriverName+ car[i].elapsedTimeDisplay));
 
             if (car[i].DriverName == DriverName)
                 ret = i + 1;
+
+            if (car[i].DriverName == "Player")
+            {
+                car[i].DriverName = "<color=red>Player</color>";
+            }
         }
         tmpro.text = sb.ToString();
+        
 
         return ret;
     }

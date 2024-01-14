@@ -22,6 +22,8 @@ public class Timer : MonoBehaviour
 
     private StartCountdown startCountdown;
 
+    private CheckpointTracker checkpointTracker;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -68,6 +70,13 @@ public class Timer : MonoBehaviour
 
             }
         }
+
+        else if(!hasEnteredCheckpoint && !startCountdown.timerStarted)
+        {
+            checkpointTracker = other.GetComponent<CheckpointTracker>();
+            checkpointTracker.startTime = Time.time;
+        }
+
     }
 
     private void OnTriggerExit(Collider other)
