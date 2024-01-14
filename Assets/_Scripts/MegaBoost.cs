@@ -65,8 +65,11 @@ public class MegaBoost : MonoBehaviour
 
                 AudioManager.Instance.Play("boost", 1, 1);
             }
+        }
 
-            if(testBoost)
+        if (other.gameObject.CompareTag("Player"))
+        {
+            if (testBoost)
             {
                 VehicleMovement ship = other.GetComponent<VehicleMovement>();
                 ship.MegaBoostInitiated(boostDuration, speedIncreaseRate);

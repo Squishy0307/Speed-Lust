@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 using Cinemachine;
+using UnityEngine.UI;
 
 public class ShipVisuals : MonoBehaviour
 {
@@ -20,11 +21,20 @@ public class ShipVisuals : MonoBehaviour
     private bool isPlayer;
     private bool isBreaking = false;
     private VehicleMovement vehicle;
+    private ShipComponents shipComponents;
 
     private int shipID;
 
     [Header("VFX")]
     [SerializeField] GameObject sparks;
+
+    public Ease burstCurve;
+
+    private Material ThrustersMat1;
+    private Material ThrustersMat2;
+
+    float burstValue = 1;
+    float enginePower = 0;
 
     private void Awake()
     {
@@ -35,6 +45,12 @@ public class ShipVisuals : MonoBehaviour
         vehicle = GetComponent<VehicleMovement>();
 
         setupShip();
+
+        shipComponents = transform.GetChild(shipID).GetComponent<ShipComponents>();
+
+        ThrustersMat1 =  shipComponents.Thrusters1.material;
+        ThrustersMat2 =  shipComponents.Thrusters2.material;
+
     }
 
     private void Update()
@@ -49,6 +65,47 @@ public class ShipVisuals : MonoBehaviour
         {
             speedParticles.Stop();
         }
+
+        if (ThrustersMat1 != null)
+        {
+            if (vehicle.GetForwardInput() >= 1)
+            {
+                enginePower = Mathf.Lerp(enginePower, 1, Time.deltaTime * 2);
+            }
+            else
+            {
+                enginePower = Mathf.Lerp(enginePower, 0, Time.deltaTime * 5);
+            }
+
+            ThrustersMat1.SetFloat("_Burst", burstValue);
+            ThrustersMat2.SetFloat("_Burst", burstValue);
+
+            ThrustersMat1.SetFloat("_Engine_Power", enginePower);
+            ThrustersMat2.SetFloat("_Engine_Power", enginePower);
+
+        }
+
+        if (Input.GetMouseButtonDown(1))
+        {
+            burst();
+        }
+    }
+
+    public void burst()
+    {   
+        DOTween.To(() => burstValue, x => burstValue = x, -1, 0.3f).SetEase(burstCurve).OnComplete(resetBurst);
+        ThrustersMat1.SetFloat("_Burst_Amplitude", 215);
+        ThrustersMat2.SetFloat("_Burst_Amplitude", 215);
+    }
+    public void megaBoostBurst()
+    {
+        ThrustersMat1.SetFloat("_Burst_Amplitude", 815);
+        ThrustersMat2.SetFloat("_Burst_Amplitude", 815);
+    }
+
+    public void resetBurst()
+    {
+        burstValue = 1;
     }
 
     public void IncreaseFOV(float FOV, float timeToReachDesireFOV)

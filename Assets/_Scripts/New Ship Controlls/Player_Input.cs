@@ -3,9 +3,11 @@ using Cinemachine;
 
 public class Player_Input : MonoBehaviour
 {
-    public string verticalAxisName = "Vertical";        //The name of the thruster axis
-    public string horizontalAxisName = "Horizontal";    //The name of the rudder axis
-    public string brakingKey = "Brake";                 //The name of the brake button
+    private PlayerControlls playerControlls;
+
+    //public string verticalAxisName = "Vertical";        //The name of the thruster axis
+    //public string horizontalAxisName = "Horizontal";    //The name of the rudder axis
+    //public string brakingKey = "Brake";                 //The name of the brake button
 
     private float thruster;                             //The current thruster value
     private float rudder;                               //The current rudder value
@@ -23,6 +25,13 @@ public class Player_Input : MonoBehaviour
         vehicalMovement = GetComponent<VehicleMovement>();
         transposer = cam.GetCinemachineComponent<CinemachineTransposer>();
         composer = cam.GetCinemachineComponent<CinemachineComposer>();
+
+        playerControlls = new PlayerControlls();
+    }
+
+    private void Start()
+    {
+        
     }
 
     void Update()
@@ -30,9 +39,15 @@ public class Player_Input : MonoBehaviour
         if (Input.GetButtonDown("Cancel") && !Application.isEditor)
             Application.Quit();
 
-        thruster = Input.GetAxis(verticalAxisName);
-        rudder = Input.GetAxis(horizontalAxisName);
-        isBraking = Input.GetButton(brakingKey);
+        thruster = playerControlls.ShipControls.Thruster.ReadValue<float>();
+        rudder = playerControlls.ShipControls.Rudder.ReadValue<Vector2>().x;
+        isBraking = playerControlls.ShipControls.Brake.IsPressed();
+
+        //thruster = Input.GetAxis(verticalAxisName);
+        //rudder = Input.GetAxis(horizontalAxisName);
+        //isBraking = Input.GetButton(brakingKey);
+
+
         vehicalMovement.SetInputs(rudder,thruster,isBraking);
 
         if (vehicalMovement.GetCurrentSpeed() >= 60)
@@ -45,6 +60,16 @@ public class Player_Input : MonoBehaviour
             transposer.m_FollowOffset.x = Mathf.Lerp(transposer.m_FollowOffset.x, 0, Time.deltaTime * camSmooth);
             composer.m_TrackedObjectOffset.x = Mathf.Lerp(composer.m_TrackedObjectOffset.x, 0, camSmoothEase.Evaluate(Time.deltaTime * camSmooth));
         }
+    }
+
+    private void OnEnable()
+    {
+        playerControlls.Enable();
+    }
+
+    private void OnDisable()
+    {
+        playerControlls.Disable();
     }
 
 }

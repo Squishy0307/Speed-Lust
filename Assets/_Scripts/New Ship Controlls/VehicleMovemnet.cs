@@ -251,9 +251,10 @@ public class VehicleMovement : MonoBehaviour
         //If the ship has collided with an object on the Wall layer...
         if (collision.gameObject.layer == LayerMask.NameToLayer("Walls"))
         {
-            shipVisuals.SpawnSparks(collision.contacts[0].point, collision.contacts[0].normal);
 
-            if (GetCurrentSpeed() >= 40f) {
+            if (GetCurrentSpeed() >= 40f) 
+            {
+                shipVisuals.SpawnSparks(collision.contacts[0].point, collision.contacts[0].normal);
 
                 if (!hitWall)
                     StartCoroutine(GotHitByWall());
@@ -273,6 +274,9 @@ public class VehicleMovement : MonoBehaviour
         {
             shipVisuals.SpawnSparks(collision.contacts[0].point, collision.contacts[0].normal);
 
+            if(isPlayer)
+                Vibration_Manager.Instance.VibrateNow(0.25f, 0.25f, 0.4f);
+
             if (!hitWall)
                 StartCoroutine(GotHitByWall());
 
@@ -289,7 +293,10 @@ public class VehicleMovement : MonoBehaviour
         rb.AddForce(transform.right * bounceDir * bounceForce, ForceMode.Impulse);
 
         if (isPlayer)
+        {
             AudioManager.Instance.Play("bounce", 0.8f, 1.2f);
+            Vibration_Manager.Instance.VibrateNow(0.3f, 0.3f, 0.5f);
+        }
     }
 
     IEnumerator GotHitByWall()
@@ -314,6 +321,14 @@ public class VehicleMovement : MonoBehaviour
     public void MegaBoostInitiated(float boostDuration, float speedIncreaseRate)
     {
         StartCoroutine(MegaBoost(boostDuration, speedIncreaseRate));
+
+        shipVisuals.megaBoostBurst();
+        shipVisuals.burst();
+
+        if (isPlayer)
+        {
+            Vibration_Manager.Instance.VibrateNow(0.2f, 0.2f, boostDuration);
+        }
     }
 
     IEnumerator MegaBoost(float boostDuration, float speedIncreaseRate)
@@ -347,6 +362,11 @@ public class VehicleMovement : MonoBehaviour
             thruster = 0;
             isBraking = false;
         }
+    }
+
+    public float GetForwardInput()
+    {
+        return thruster;
     }
 
     public float GetCurrentSpeed()

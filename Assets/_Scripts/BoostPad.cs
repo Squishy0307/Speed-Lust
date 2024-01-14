@@ -32,6 +32,8 @@ public class BoostPad : MonoBehaviour
 
             if (other.gameObject.GetComponent<VehicleMovement>().isPlayer)
                 AudioManager.Instance.Play("boost", 1, 1);
+
+            ship.GetComponent<ShipVisuals>().burst();
         }
     }
 }
