@@ -186,7 +186,7 @@ public class VehicleMovement : MonoBehaviour
         //Calculate the rotation needed for this new angle
         Quaternion bodyRotation = transform.rotation * Quaternion.Euler(0f, 0f, angle);
         //Finally, apply this angle to the ship's body
-        shipBody.rotation = Quaternion.Lerp(shipBody.rotation, bodyRotation, Time.deltaTime * 10f);
+        shipBody.rotation = Quaternion.Lerp(shipBody.rotation, bodyRotation, Time.deltaTime * 5f);
     }
 
     void CalculatePropulsion()

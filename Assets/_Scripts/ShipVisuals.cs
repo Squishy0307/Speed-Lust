@@ -27,6 +27,9 @@ public class ShipVisuals : MonoBehaviour
 
     [Header("VFX")]
     [SerializeField] GameObject sparks;
+    [SerializeField] Material spdBlur;
+    [SerializeField] Material spdDistortion;
+    [SerializeField] Material spdLines;
 
     public Ease burstCurve;
 
@@ -35,6 +38,8 @@ public class ShipVisuals : MonoBehaviour
 
     float burstValue = 1;
     float enginePower = 0;
+    float screenEffectIntensity = 0;
+    
 
     private void Awake()
     {
@@ -60,12 +65,25 @@ public class ShipVisuals : MonoBehaviour
         if(vehicle.GetCurrentSpeed() > 20) 
         {
             speedParticles.Play();
+
+            screenEffectIntensity = Mathf.Lerp(screenEffectIntensity, 1, Time.deltaTime);
+
+            spdBlur.SetFloat("_Blur_Intensity", screenEffectIntensity);
+            spdDistortion.SetFloat("_Mask_Intensity", screenEffectIntensity);
+            spdLines.SetFloat("_Effect_Intensity", screenEffectIntensity);
         }
         else
         {
             speedParticles.Stop();
+
+            screenEffectIntensity = Mathf.Lerp(screenEffectIntensity, 0, Time.deltaTime);
+
+            spdBlur.SetFloat("_Blur_Intensity", screenEffectIntensity);
+            spdDistortion.SetFloat("_Mask_Intensity", screenEffectIntensity);
+            spdLines.SetFloat("_Effect_Intensity", screenEffectIntensity);
         }
 
+        //MAKE IT WORK FOR AI ASS WELL!
         if (ThrustersMat1 != null)
         {
             if (vehicle.GetForwardInput() >= 1)
@@ -213,6 +231,13 @@ public class ShipVisuals : MonoBehaviour
         GameObject s = Instantiate(sparks, pos, Quaternion.Euler(rot));
         s.transform.parent = transform;
         Destroy(s, 1f);
+    }
+
+    private void OnDisable()
+    {
+        spdBlur.SetFloat("_Blur_Intensity", 0);
+        spdDistortion.SetFloat("_Mask_Intensity", 0);
+        spdLines.SetFloat("_Effect_Intensity", 0);
     }
 }
 
