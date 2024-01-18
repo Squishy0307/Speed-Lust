@@ -125,10 +125,17 @@ public class CheckpointTracker : MonoBehaviour
     {
         if(collision.gameObject.CompareTag("KillZone"))
         {
-            transform.position = respawnPoint.transform.position + new Vector3(0,-10,0);
-            transform.eulerAngles = new Vector3(respawnPoint.transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z);
+            Debug.Log("Killzoned");
+            //StartCoroutine(Respawn());
         }
     }
+
+    //IEnumerator Respawn()
+    //{
+    //    yield return new WaitForSeconds(0.5f);
+    //    transform.position = respawnPoint.transform.position + new Vector3(0, -10, 0);
+    //    transform.eulerAngles = new Vector3(respawnPoint.transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z);
+    //}
 
     private string GenerateName()
     {

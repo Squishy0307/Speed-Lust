@@ -20,6 +20,9 @@ public class RespawnPoint : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+
+        Fader.Instance.RespawnFade();
+
         tracker = other.GetComponent<CheckpointTracker>();
         tracker.respawnPoint = this.gameObject;
     }

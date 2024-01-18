@@ -1,6 +1,10 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/ProBuilder Data.meta
 guid: 68f9d37fd3e91374fa39db32a79613fb
 folderAsset: yes
+========
+guid: df0fb39c04e15154aa970eb432fa8402
+>>>>>>>> 6a6fa565f3ec432110f94e759f357af0fb5a0b82:Assets/Scenes/Main Scene/CITY TEST.unity.meta
 DefaultImporter:
   externalObjects: {}
   userData: 
