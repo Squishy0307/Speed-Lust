@@ -20,6 +20,7 @@ public class SpeedHUD : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        speedSlider.value = playerSpeed.currentSpd;
+        
+        speedSlider.value = Mathf.Lerp(speedSlider.value, playerSpeed.currentSpd, Time.deltaTime);
     }
 }
