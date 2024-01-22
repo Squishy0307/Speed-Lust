@@ -24,7 +24,7 @@ public class CheckpointTracker : MonoBehaviour
     public float startTime;
     private StartCountdown startCountdown;
     public string Name;
-    public GameObject respawnPoint;
+    public Transform respawnPoint;
 
     // Start is called before the first frame update
     void Start()
@@ -126,16 +126,18 @@ public class CheckpointTracker : MonoBehaviour
         if(collision.gameObject.CompareTag("KillZone"))
         {
             Debug.Log("Killzoned");
-            //StartCoroutine(Respawn());
+            StartCoroutine(Respawn());
         }
     }
 
-    //IEnumerator Respawn()
-    //{
-    //    yield return new WaitForSeconds(0.5f);
-    //    transform.position = respawnPoint.transform.position + new Vector3(0, -10, 0);
-    //    transform.eulerAngles = new Vector3(respawnPoint.transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z);
-    //}
+    IEnumerator Respawn()
+    {
+        Fader.Instance.RespawnFade();
+        yield return new WaitForSeconds(0.75f);
+        transform.position = respawnPoint.transform.position + new Vector3(0, 0, 0);
+        //transform.eulerAngles = new Vector3(respawnPoint.transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z);
+        transform.rotation = respawnPoint.transform.rotation;
+    }
 
     private string GenerateName()
     {

@@ -51,7 +51,7 @@ public class Fader : MonoBehaviour
 
         Sequence respawner = DOTween.Sequence();
         respawner.Append(fadeImg.DOFade(1, 0.5f));
-        respawner.Append(DOTween.To(() => respawnSequenceBreak, x => respawnSequenceBreak = x, 1, 0.25f));
+        respawner.Append(DOTween.To(() => respawnSequenceBreak, x => respawnSequenceBreak = x, 1, 0.75f));
         respawner.Append(fadeImg.DOFade(0, 0.5f));
     }
 
