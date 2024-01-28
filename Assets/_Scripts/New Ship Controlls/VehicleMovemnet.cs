@@ -47,12 +47,12 @@ public class VehicleMovement : MonoBehaviour
     Rigidbody rb;                           //A reference to the ship's rigidbody		
     ShipVisuals shipVisuals;                //A reference to the ShipVisuals script
     private float startDriveForce;
-    private float startHoverHeight;
+    private float variableHoverHeight;
     private float startMaxSpeed;
     public bool isPlayer = false; // hi josh here, just made this public so BoostPad could reference it. lmk if there's a better way to do that lol
     private bool landEffectsTriggered = false;
     private float bounceDir = 1;
-
+    private bool rotationFix = false;
     
     public int checkpointCount;
     public string lapNumber;
@@ -74,7 +74,7 @@ public class VehicleMovement : MonoBehaviour
         drag = driveForce / terminalVelocity;
 
         startDriveForce = driveForce;
-        startHoverHeight = hoverHeight;
+        variableHoverHeight = hoverHeight + 0.2f;
         startMaxSpeed = maxSpeed;
 
         nextCheckpoint = firstCheckpoint;
@@ -83,6 +83,10 @@ public class VehicleMovement : MonoBehaviour
         {
             isPlayer = true;
         }
+
+        //DOTween.To(() => hoverHeight, x => hoverHeight = x, variableHoverHeight, 0.2f).SetLoops(-1,LoopType.Yoyo);
+
+        StartCoroutine(roationHack());
     }
 
     void FixedUpdate()
@@ -130,20 +134,19 @@ public class VehicleMovement : MonoBehaviour
             //track (which is not always straight down in the world)...
             Vector3 gravity = -groundNormal * hoverGravity * height;
 
-            //...and finally apply the hover and gravity forces
-            rb.AddForce(force, ForceMode.Acceleration);
-            rb.AddForce(gravity, ForceMode.Acceleration);
-
             if (landEffectsTriggered && isPlayer)
             {
                 CameraShaker.Instance.ShakeNow(3.5f, 0.1f, isPlayer);
                 landEffectsTriggered = false;
 
                 Vector3 p = Vector3.ProjectOnPlane(transform.forward, groundNormal);
-                Quaternion r = Quaternion.LookRotation(p, groundNormal);
-
+                Quaternion r = Quaternion.LookRotation(p, groundNormal);             
                 rb.rotation = r;
             }
+
+            //...and finally apply the hover and gravity forces
+            rb.AddForce(force, ForceMode.Acceleration);
+            rb.AddForce(gravity, ForceMode.Acceleration);
 
             //Debug.DrawLine(hitInfo.point, hitInfo.point + groundNormal * maxGroundDist, Color.blue);
         }
@@ -170,13 +173,13 @@ public class VehicleMovement : MonoBehaviour
 
         //Move the ship over time to match the desired rotation to match the ground. This is 
         //done smoothly (using Lerp) to make it feel more realistic
-        if (isOnGround)
+        if (!rotationFix) //isGrounded
         {
-            rb.MoveRotation(Quaternion.Slerp(rb.rotation, rotation, Time.deltaTime * 10f));
+            rb.MoveRotation(Quaternion.Lerp(rb.rotation, rotation, Time.deltaTime * 20f));
         }
         else
         {
-            rb.MoveRotation(Quaternion.Slerp(rb.rotation, rotation, Time.deltaTime * 6f));
+            rb.rotation = rotation;
         }
         //Calculate the angle we want the ship's body to bank into a turn based on the current rudder.
         //It is worth noting that these next few steps are completetly optional and are cosmetic.
@@ -346,6 +349,17 @@ public class VehicleMovement : MonoBehaviour
         DOTween.To(() => driveForce, x => driveForce = x, startDriveForce, 5);
         //DOTween.To(() => hoverHeight, x => hoverHeight = x, startHoverHeight, 5).SetEase(megaBoostHoverCurve);
         DOTween.To(() => maxSpeed, x => maxSpeed = x, startMaxSpeed, 7);
+    }
+
+    IEnumerator roationHack()
+    {
+        while (true)
+        {
+            rotationFix = false;
+            yield return new WaitForSeconds(2f);
+            //rotationFix = true;
+            yield return new WaitForSeconds(2f);
+        }
     }
 
     public void SetInputs(float Rudder, float Thruster, bool IsBraking)

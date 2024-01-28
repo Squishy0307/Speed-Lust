@@ -34,6 +34,7 @@ public class BoostPad : MonoBehaviour
                 AudioManager.Instance.Play("boost", 1, 1);
 
             ship.GetComponent<ShipVisuals>().burst();
+            ship.GetComponent<ShipVisuals>().BoostFOVChange();
         }
     }
 }

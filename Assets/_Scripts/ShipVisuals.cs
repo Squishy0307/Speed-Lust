@@ -102,11 +102,18 @@ public class ShipVisuals : MonoBehaviour
             ThrustersMat2.SetFloat("_Engine_Power", enginePower);
 
         }
+    }
 
-        if (Input.GetMouseButtonDown(1))
-        {
-            burst();
-        }
+    public void BoostFOVChange()
+    {
+        StartCoroutine(FovChange());
+    }
+
+    IEnumerator FovChange()
+    {
+        IncreaseFOV(95, 0.3f);
+        yield return new WaitForSeconds(0.3f);
+        ResetFOV(0.3f);
     }
 
     public void burst()
