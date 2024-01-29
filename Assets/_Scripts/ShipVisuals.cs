@@ -111,9 +111,11 @@ public class ShipVisuals : MonoBehaviour
 
     IEnumerator FovChange()
     {
-        IncreaseFOV(95, 0.3f);
-        yield return new WaitForSeconds(0.3f);
-        ResetFOV(0.3f);
+        IncreaseFOV(110, 0.3f);
+        spdLines.SetFloat("_Line_Amount", 1.7f);
+        yield return new WaitForSeconds(0.55f);
+        spdLines.SetFloat("_Line_Amount", 3.7f);
+        ResetFOV(1.5f);
     }
 
     public void burst()
@@ -245,6 +247,7 @@ public class ShipVisuals : MonoBehaviour
         spdBlur.SetFloat("_Blur_Intensity", 0);
         spdDistortion.SetFloat("_Mask_Intensity", 0);
         spdLines.SetFloat("_Effect_Intensity", 0);
+        spdLines.SetFloat("_Line_Amount", 3.7f);
     }
 }
 
