@@ -25,10 +25,14 @@ public class CheckpointTracker : MonoBehaviour
     private StartCountdown startCountdown;
     public string Name;
     public Transform respawnPoint;
+    private Rigidbody rb;
+    private VehicleMovement movement;
 
     // Start is called before the first frame update
     void Start()
     {
+        movement = GetComponent<VehicleMovement>();
+        rb = GetComponent<Rigidbody>(); 
         startCountdown = FindObjectOfType<StartCountdown>();
         Buttons.SetActive(false);
         GameObject go = null;
@@ -133,10 +137,15 @@ public class CheckpointTracker : MonoBehaviour
     IEnumerator Respawn()
     {
         Fader.Instance.RespawnFade();
+        movement.respawning = true;
+        rb.velocity = new Vector3(0, 0, 0);
         yield return new WaitForSeconds(0.75f);
         transform.position = respawnPoint.transform.position + new Vector3(0, 0, 0);
         //transform.eulerAngles = new Vector3(respawnPoint.transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z);
         transform.rotation = respawnPoint.transform.rotation;
+        
+        
+        movement.respawning = false;
     }
 
     private string GenerateName()

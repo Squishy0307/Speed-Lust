@@ -10,6 +10,7 @@ public class SpeedHUD : MonoBehaviour
     public GameObject player;
     public Slider speedSlider;
     public ShipHUD playerSpeed;
+    public float lerpSpeed = 1.0f;
 
     // Start is called before the first frame update
     void Start()
@@ -21,6 +22,11 @@ public class SpeedHUD : MonoBehaviour
     void Update()
     {
         
-        speedSlider.value = Mathf.Lerp(speedSlider.value, playerSpeed.currentSpd, Time.deltaTime);
+        speedSlider.value = Mathf.Lerp(speedSlider.value, playerSpeed.currentSpd + 50, lerpSpeed * Time.deltaTime);
+
+        //if (speedSlider.value <= 59)
+        //{
+        //    speedSlider.value = 59;
+        //}
     }
 }

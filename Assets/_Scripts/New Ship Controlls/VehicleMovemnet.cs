@@ -41,6 +41,7 @@ public class VehicleMovement : MonoBehaviour
     private float thruster;
     private bool isBraking;
 
+    public bool respawning;
     private bool hitWall;
     public float bounceForce = 15f;
 
@@ -311,7 +312,7 @@ public class VehicleMovement : MonoBehaviour
 
     public bool CanControlVehicle()
     {
-        if (hitWall || !GameManager.Instance.RaceStarted)
+        if (hitWall || respawning || !GameManager.Instance.RaceStarted)
         {
             return false;
         }
