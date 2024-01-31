@@ -90,6 +90,6 @@ public class Timer : MonoBehaviour
         int minutes = d / (60 * 100);
         int seconds = (d % (60 * 100)) / 100;
         int hundredths = d % 100;
-        return String.Format("Lap Time: " + "{0:00}:{1:00}.{2:00}", minutes, seconds, hundredths);
+        return String.Format("{0:00}:{1:00}.{2:00}", minutes, seconds, hundredths);
     }
 }
