@@ -176,7 +176,7 @@ public class VehicleMovement : MonoBehaviour
         //done smoothly (using Lerp) to make it feel more realistic
         if (!rotationFix) //isGrounded
         {
-            rb.MoveRotation(Quaternion.Lerp(rb.rotation, rotation, Time.deltaTime * 20f));
+            rb.MoveRotation(Quaternion.Lerp(rb.rotation, rotation, Time.deltaTime * 30f));
         }
         else
         {
