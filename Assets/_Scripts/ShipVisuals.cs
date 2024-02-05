@@ -30,6 +30,7 @@ public class ShipVisuals : MonoBehaviour
     [SerializeField] Material spdBlur;
     [SerializeField] Material spdDistortion;
     [SerializeField] Material spdLines;
+    [SerializeField] ParticleSystem boostSonicBurst;
 
     public Ease burstCurve;
 
@@ -107,6 +108,7 @@ public class ShipVisuals : MonoBehaviour
     public void BoostFOVChange()
     {
         StartCoroutine(FovChange());
+        boostSonicBurst.Play(); 
     }
 
     IEnumerator FovChange()
@@ -128,6 +130,8 @@ public class ShipVisuals : MonoBehaviour
     {
         ThrustersMat1.SetFloat("_Burst_Amplitude", 815);
         ThrustersMat2.SetFloat("_Burst_Amplitude", 815);
+
+        boostSonicBurst.Play();
     }
 
     public void resetBurst()
@@ -199,13 +203,16 @@ public class ShipVisuals : MonoBehaviour
 
             for (int i = 0; i < transform.childCount; i++)
             {
-                if (i == shipID)
+                if (transform.GetChild(i).name != "Boost_Burst")
                 {
-                    transform.GetChild(i).gameObject.SetActive(true);
-                }
-                else
-                {
-                    transform.GetChild(i).gameObject.SetActive(false);
+                    if (i == shipID)
+                    {
+                        transform.GetChild(i).gameObject.SetActive(true);
+                    }
+                    else
+                    {
+                        transform.GetChild(i).gameObject.SetActive(false);
+                    }
                 }
             }
         }
