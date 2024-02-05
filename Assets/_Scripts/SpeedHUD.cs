@@ -23,6 +23,7 @@ public class SpeedHUD : MonoBehaviour
     {
         
         speedSlider.value = Mathf.Lerp(speedSlider.value, playerSpeed.currentSpd + 50, lerpSpeed * Time.deltaTime);
+        player.GetComponent<AudioSource>().pitch = 1 + ((speedSlider.value - 50) / 1000);
 
         //if (speedSlider.value <= 59)
         //{
