@@ -23,6 +23,9 @@ public class Timer : MonoBehaviour
     private StartCountdown startCountdown;
 
     private CheckpointTracker checkpointTracker;
+    public float currentAIBestTime;
+
+    public LeaderboardTimes LBT;
 
     // Start is called before the first frame update
     void Start()
@@ -67,6 +70,32 @@ public class Timer : MonoBehaviour
 
                 bestTimes.Sort();
                 bestLap.text = "Best Lap: " + bestTimes[0].ToString("00:00");
+
+            }
+        }
+
+        if (other.CompareTag("AI") && !hasEnteredCheckpoint )
+        {
+            hasEnteredCheckpoint = true;
+            other.gameObject.GetComponent<CheckpointTracker>().prevLapTextAI.text = "Last Lap: " + other.gameObject.GetComponent<CheckpointTracker>().elapsedTime.ToString("00:00");
+            hasStartedLap = true;
+            startTime = Time.time;
+
+            LBT.DoLeaderboard();
+
+            if (other.gameObject.GetComponent<CheckpointTracker>().elapsedTime >= 1 && other.gameObject.GetComponent<CheckpointTracker>().finishLinePass >= 1)
+            {
+                //Debug.Log("Working");
+                bestTimes.Add(other.gameObject.GetComponent<CheckpointTracker>().elapsedTime);
+
+            }
+
+            if (bestTimes.Count > 0)
+            {
+
+                bestTimes.Sort();
+                other.gameObject.GetComponent<CheckpointTracker>().bestLapAI.text = "Best Lap: " + bestTimes[0].ToString("00:00");
+                currentAIBestTime = bestTimes[0];
 
             }
         }

@@ -52,7 +52,7 @@ public class Leaderboard : MonoBehaviour
             if (car[i].DriverName == focuscar)
                 sb.AppendLine(string.Format("{0} {1} <-- ", i + 1, car[i].DriverName+ car[i].elapsedTimeDisplay));
             else
-                sb.AppendLine(string.Format("{0} {1}", i + 1, car[i].DriverName+ car[i].elapsedTimeDisplay));
+                sb.AppendLine(string.Format("{0} {1}", i + 1, car[i].DriverName+ car[i].bestLapAI));
 
             if (car[i].DriverName == DriverName)
                 ret = i + 1;

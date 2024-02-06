@@ -9,7 +9,7 @@ public class ShipAI : MonoBehaviour
     private Vector3 targetPosition;
 
 
-    WaypointNode currentWaypoint;
+    public WaypointNode currentWaypoint;
     WaypointNode[] allWaypoints;
 
     [SerializeField] float shipDetectionRadius = 10f;

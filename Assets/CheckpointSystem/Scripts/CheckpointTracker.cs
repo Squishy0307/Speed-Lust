@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using TMPro;
 
 public class CheckpointTracker : MonoBehaviour
 {
@@ -27,6 +28,11 @@ public class CheckpointTracker : MonoBehaviour
     public Transform respawnPoint;
     private Rigidbody rb;
     private VehicleMovement movement;
+    public TextMeshProUGUI prevLapTextAI;
+    public TextMeshProUGUI bestLapAI;
+    public float bestTime;
+    public string bestTimeDisplay;
+    public LeaderboardTimes LBT;
 
     // Start is called before the first frame update
     void Start()
@@ -62,6 +68,7 @@ public class CheckpointTracker : MonoBehaviour
 
             elapsedTime = Time.time - startTime;
             elapsedTimeDisplay = elapsedTime.ToString("0:00".PadLeft(18 - Name.Length));
+            bestTimeDisplay = timer.currentAIBestTime.ToString("0:00");
             //Debug.Log(elapsedTime);
         }
     }
@@ -85,8 +92,9 @@ public class CheckpointTracker : MonoBehaviour
                 {
                     finishLinePass += 1;
                     checkpoint_name = other.name;
+                    LBT.DoLeaderboard();
 
-                    if(finishLinePass >= 2)
+                    if (finishLinePass >= 2)
                     {
                         EndRace();
                     }
