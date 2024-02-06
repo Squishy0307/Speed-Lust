@@ -17,7 +17,7 @@ public class Leaderboard : MonoBehaviour
     private void Start()
     {
         //get reference to the leaderboard text component
-        tmpro = GameObject.Find("Leaderboard").GetComponent<TextMeshProUGUI>();
+        tmpro = GetComponent<TextMeshProUGUI>();
         tmpro.text = "Leaderboard";
 
         //Transform lookat = Camera.main.GetComponent<CamFollow>().lookat;

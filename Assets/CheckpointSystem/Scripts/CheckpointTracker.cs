@@ -36,7 +36,7 @@ public class CheckpointTracker : MonoBehaviour
         startCountdown = FindObjectOfType<StartCountdown>();
         Buttons.SetActive(false);
         GameObject go = null;
-        go = GameObject.Find("CheckpointsSpline");
+        go = GameObject.Find("TrackSpline");
         if (go != null)
             script_checkpoints = go.GetComponent<Checkpoints>();
         go = GameObject.Find("Leaderboard");
