@@ -30,17 +30,19 @@ public class ShipVisuals : MonoBehaviour
     [SerializeField] Material spdBlur;
     [SerializeField] Material spdDistortion;
     [SerializeField] Material spdLines;
+    [SerializeField] MeshRenderer wind;
     [SerializeField] ParticleSystem boostSonicBurst;
 
     public Ease burstCurve;
 
     private Material ThrustersMat1;
     private Material ThrustersMat2;
+    private Material windMat;
 
     float burstValue = 1;
     float enginePower = 0;
     float screenEffectIntensity = 0;
-    
+    float windEffect = 0;
 
     private void Awake()
     {
@@ -56,11 +58,24 @@ public class ShipVisuals : MonoBehaviour
 
         ThrustersMat1 =  shipComponents.Thrusters1.material;
         ThrustersMat2 =  shipComponents.Thrusters2.material;
+        windMat = wind.material;
 
     }
 
     private void Update()
     {
+
+        if (vehicle.GetCurrentSpeed() > 160)
+        {
+            windEffect = Mathf.Lerp(windEffect, 1, Time.deltaTime);
+            windMat.SetFloat("_Speed", windEffect);
+        }
+        else
+        {
+            windEffect = Mathf.Lerp(windEffect, 0, Time.deltaTime);
+            windMat.SetFloat("_Speed", windEffect);
+        }
+
         if (!isPlayer) return;
 
         if(vehicle.GetCurrentSpeed() > 20) 
@@ -84,7 +99,7 @@ public class ShipVisuals : MonoBehaviour
             spdLines.SetFloat("_Effect_Intensity", screenEffectIntensity);
         }
 
-        //MAKE IT WORK FOR AI ASS WELL!
+            //MAKE IT WORK FOR AI ASS WELL!
         if (ThrustersMat1 != null)
         {
             if (vehicle.GetForwardInput() >= 1)

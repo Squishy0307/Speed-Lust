@@ -87,7 +87,7 @@ public class VehicleMovement : MonoBehaviour
 
         //DOTween.To(() => hoverHeight, x => hoverHeight = x, variableHoverHeight, 0.2f).SetLoops(-1,LoopType.Yoyo);
 
-        StartCoroutine(roationHack());
+        //StartCoroutine(roationHack());
     }
 
     void FixedUpdate()
