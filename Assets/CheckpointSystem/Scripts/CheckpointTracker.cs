@@ -94,7 +94,7 @@ public class CheckpointTracker : MonoBehaviour
                     checkpoint_name = other.name;
                     LBT.DoLeaderboard();
 
-                    if (finishLinePass >= 2)
+                    if (finishLinePass >= 2 && gameObject.CompareTag("Player"))
                     {
                         EndRace();
                     }
@@ -144,7 +144,11 @@ public class CheckpointTracker : MonoBehaviour
 
     IEnumerator Respawn()
     {
-        Fader.Instance.RespawnFade();
+        if(gameObject.CompareTag("Player"))
+        {
+            Fader.Instance.RespawnFade();
+        }
+        
         movement.respawning = true;
         rb.velocity = new Vector3(0, 0, 0);
         yield return new WaitForSeconds(0.75f);
