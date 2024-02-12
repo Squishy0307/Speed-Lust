@@ -33,10 +33,12 @@ public class CheckpointTracker : MonoBehaviour
     public float bestTime;
     public string bestTimeDisplay;
     public LeaderboardTimes LBT;
+    public GameObject EndOfRaceUI;
 
     // Start is called before the first frame update
     void Start()
     {
+        EndOfRaceUI.SetActive(false);
         movement = GetComponent<VehicleMovement>();
         rb = GetComponent<Rigidbody>(); 
         startCountdown = FindObjectOfType<StartCountdown>();
@@ -193,5 +195,6 @@ public class CheckpointTracker : MonoBehaviour
     {
         GameManager.Instance.RaceStarted = false;
         Buttons.SetActive(true);
+        EndOfRaceUI.SetActive(true);
     }
 }

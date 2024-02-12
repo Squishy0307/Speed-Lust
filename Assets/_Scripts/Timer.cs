@@ -16,6 +16,7 @@ public class Timer : MonoBehaviour
     public TextMeshProUGUI lapText;
     public TextMeshProUGUI prevLapText;
     public TextMeshProUGUI bestLap;
+    public float overallBestTime;
     public List<float> bestTimes = new List<float>();
 
     public CheckpointTracker tracker;
@@ -69,7 +70,12 @@ public class Timer : MonoBehaviour
             {
 
                 bestTimes.Sort();
-                bestLap.text = "Best Lap: " + bestTimes[0].ToString("00:00");
+                overallBestTime = bestTimes[0];
+                int minutes = Mathf.FloorToInt(overallBestTime / 60);
+                int seconds = Mathf.FloorToInt(overallBestTime % 60);
+                bestLap.text = string.Format("{0:00}:{1:00}", minutes, seconds);
+
+                //bestLap.text = bestTimes[0].ToString("{00}");
 
             }
         }
