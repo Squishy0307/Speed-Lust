@@ -38,6 +38,7 @@ public class Scene_Manager : MonoBehaviour
     IEnumerator fadeToScene(int buildIndex)
     {
         Fader.Instance.FadeOut();
+        MusicController.instance.ChangeVolume(0, 0, 0.5f);
         isLoadingScene = true;
 
         yield return new WaitForSeconds(0.5f);
