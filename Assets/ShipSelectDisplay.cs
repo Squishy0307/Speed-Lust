@@ -1,0 +1,48 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.InputSystem;
+
+public class ShipSelectDisplay : MonoBehaviour
+{
+    public GameObject ship1;
+    public GameObject ship2;
+    public GameObject ship3;
+    public UnityEvent onSelect;
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        ship2.SetActive(false);
+        ship3.SetActive(false);
+
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        
+    }
+
+    public void HighlightShip1()
+    {
+        ship1.SetActive(true);
+        ship2.SetActive(false);
+        ship3.SetActive(false);
+    }
+
+    public void HighlightShip2()
+    {
+        ship1.SetActive(false);
+        ship2.SetActive(true);
+        ship3.SetActive(false);
+    }
+
+    public void HighlightShip3()
+    {
+        ship1.SetActive(false);
+        ship2.SetActive(false);
+        ship3.SetActive(true);
+    }
+}

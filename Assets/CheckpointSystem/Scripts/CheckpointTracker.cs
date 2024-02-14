@@ -34,6 +34,7 @@ public class CheckpointTracker : MonoBehaviour
     public string bestTimeDisplay;
     public LeaderboardTimes LBT;
     public GameObject EndOfRaceUI;
+    public Quaternion rememberRotation;
 
     // Start is called before the first frame update
     void Start()
@@ -70,7 +71,7 @@ public class CheckpointTracker : MonoBehaviour
 
             elapsedTime = Time.time - startTime;
             elapsedTimeDisplay = elapsedTime.ToString("0:00".PadLeft(18 - Name.Length));
-            bestTimeDisplay = timer.currentAIBestTime.ToString("0:00");
+            //bestTimeDisplay = timer.currentAIBestTime.ToString("0:00");
             //Debug.Log(elapsedTime);
         }
     }
@@ -140,6 +141,7 @@ public class CheckpointTracker : MonoBehaviour
         if(collision.gameObject.CompareTag("KillZone"))
         {
             Debug.Log("Killzoned");
+            rememberRotation = gameObject.transform.rotation;
             StartCoroutine(Respawn());
         }
     }
@@ -156,8 +158,9 @@ public class CheckpointTracker : MonoBehaviour
         yield return new WaitForSeconds(0.75f);
         transform.position = respawnPoint.transform.position + new Vector3(0, 0, 0);
         //transform.eulerAngles = new Vector3(respawnPoint.transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z);
-        transform.rotation = respawnPoint.transform.rotation;
-        
+        //transform.rotation = respawnPoint.transform.rotation;
+        //transform.rotation = rememberRotation;
+        gameObject.transform.LookAt(movement.nextCheckpoint);
         
         movement.respawning = false;
     }

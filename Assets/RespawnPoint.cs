@@ -22,8 +22,11 @@ public class RespawnPoint : MonoBehaviour
     {
 
         //Fader.Instance.RespawnFade();
-
-        tracker = other.GetComponent<CheckpointTracker>();
-        tracker.respawnPoint = this.gameObject.transform.GetChild(0);
+        Debug.Log("Working");
+        if (other.gameObject.CompareTag("Player") || other.gameObject.CompareTag("AI"))
+        {
+            tracker = other.GetComponent<CheckpointTracker>();
+            tracker.respawnPoint = this.gameObject.transform;
+        }
     }
 }
