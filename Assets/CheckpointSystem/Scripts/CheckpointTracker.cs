@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using TMPro;
+using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class CheckpointTracker : MonoBehaviour
 {
@@ -30,16 +32,20 @@ public class CheckpointTracker : MonoBehaviour
     private VehicleMovement movement;
     public TextMeshProUGUI prevLapTextAI;
     public TextMeshProUGUI bestLapAI;
+    public TextMeshProUGUI lapText;
     public float bestTime;
     public string bestTimeDisplay;
     public LeaderboardTimes LBT;
     public GameObject EndOfRaceUI;
+    public GameObject disableAtEnd;
     public Quaternion rememberRotation;
+    public Animator leaderboardAnim;
+    public Animator bestTimeAnim;
 
     // Start is called before the first frame update
     void Start()
     {
-        EndOfRaceUI.SetActive(false);
+        //EndOfRaceUI.SetActive(false);
         movement = GetComponent<VehicleMovement>();
         rb = GetComponent<Rigidbody>(); 
         startCountdown = FindObjectOfType<StartCountdown>();
@@ -74,6 +80,29 @@ public class CheckpointTracker : MonoBehaviour
             //bestTimeDisplay = timer.currentAIBestTime.ToString("0:00");
             //Debug.Log(elapsedTime);
         }
+
+        if(Buttons.activeSelf)
+        {
+            if (Gamepad.current.buttonSouth.wasPressedThisFrame)
+            {
+                Debug.Log("PressedA");
+                SceneManager.LoadScene(2);
+            }
+            if (Gamepad.current.buttonEast.wasPressedThisFrame)
+            {
+                Debug.Log("PressedB");
+                SceneManager.LoadScene(1);
+            }
+        }
+
+        if(gameObject.CompareTag("Player"))
+        {
+            if (elapsedTime > 0)
+            {
+                lapText.text = "Laps " + finishLinePass + "/2";
+            }
+        }
+        
     }
 
     private void OnTriggerEnter(Collider other)
@@ -95,9 +124,9 @@ public class CheckpointTracker : MonoBehaviour
                 {
                     finishLinePass += 1;
                     checkpoint_name = other.name;
-                    LBT.DoLeaderboard();
+                    //LBT.DoLeaderboard();
 
-                    if (finishLinePass >= 2 && gameObject.CompareTag("Player"))
+                    if (finishLinePass >= 3 && gameObject.CompareTag("Player"))
                     {
                         EndRace();
                     }
@@ -196,6 +225,9 @@ public class CheckpointTracker : MonoBehaviour
 
     public void EndRace()
     {
+        disableAtEnd.SetActive(false);
+        leaderboardAnim.SetTrigger("RaceEnded");
+        bestTimeAnim.SetTrigger("ShowTime");
         GameManager.Instance.RaceStarted = false;
         Buttons.SetActive(true);
         EndOfRaceUI.SetActive(true);

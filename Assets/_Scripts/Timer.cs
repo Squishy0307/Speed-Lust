@@ -53,7 +53,7 @@ public class Timer : MonoBehaviour
         if (other.CompareTag("Player") && !hasEnteredCheckpoint && !startCountdown.timerStarted)
         {
             hasEnteredCheckpoint = true;
-            prevLapText.text = "Last Lap: " + elapsedTime.ToString("00:00");
+            //prevLapText.text = "Last Lap: " + elapsedTime.ToString("00:00");
             hasStartedLap = true;
             startTime = Time.time;
 

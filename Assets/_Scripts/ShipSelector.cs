@@ -29,10 +29,17 @@ public class ShipSelector : MonoBehaviour
 
     void Start()
     {
+        foreach (GameObject ship in ships)
+        {
+            if (ship.activeSelf)
+            {
+                currentShip = ship;
+            }
+        }
         currentShip = ships[currentShipIndex];
         shipName.text = currentShip.name;
 
-        for (int i = 0; i < ships.Length; i++) 
+        for (int i = 0; i < ships.Length; i++)
         {
             if (i == 0)
             {
@@ -43,7 +50,17 @@ public class ShipSelector : MonoBehaviour
             ships[i].SetActive(false);
         }
     }
-    
+
+    //private void Update()
+    //{
+    //    foreach (GameObject ship in ships)
+    //    {
+    //        if (ship.activeSelf)
+    //        {
+    //            currentShip = ship;
+    //        }
+    //    }
+    //}
     public void NextShip()
     {
         ships[currentShipIndex].SetActive(false);
