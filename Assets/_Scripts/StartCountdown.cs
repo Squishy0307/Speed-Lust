@@ -16,18 +16,18 @@ public class StartCountdown : MonoBehaviour
 
     void Start()
     {
-        //countdown.SetActive(false);
-        //currentTime = startingTime;
-        //StartCoroutine(Countdown(Mathf.FloorToInt(startingTime)));
-    }
-
-    public void BeginCountdown()
-    {
-        player.GetComponent<AudioSource>().Play();
         countdown.SetActive(false);
         currentTime = startingTime;
         StartCoroutine(Countdown(Mathf.FloorToInt(startingTime)));
     }
+
+    //public void BeginCountdown()
+    //{
+    //    player.GetComponent<AudioSource>().Play();
+    //    countdown.SetActive(false);
+    //    currentTime = startingTime;
+    //    StartCoroutine(Countdown(Mathf.FloorToInt(startingTime)));
+    //}
 
     public void Update()
     {

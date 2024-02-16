@@ -237,7 +237,7 @@ public class VehicleMovement : MonoBehaviour
         //by the amount of applied thruster and subtracting the drag amount
         float propulsion = driveForce * thruster - drag * Mathf.Clamp(speed, 0f, terminalVelocity);
 
-        if(rb.velocity.y <= fallSpeed)
+        if(rb.velocity.y <= fallSpeed && !isOnGround)
         {
             rb.velocity = new Vector3(rb.velocity.x,fallSpeed,rb.velocity.z);
         }

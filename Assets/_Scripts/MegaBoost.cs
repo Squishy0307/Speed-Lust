@@ -16,16 +16,11 @@ public class MegaBoost : MonoBehaviour
 
     private void Start()
     {
-        //orangeRingMat.SetFloat("_Speed", 0);
-        //outerRingMat.SetFloat("_Speed", 0);
-        //innerRingMat.SetFloat("_Speed", 0);
+        orangeRingMat.SetFloat("_Speed", 0);
+        outerRingMat.SetFloat("_Speed", 0);
+        innerRingMat.SetFloat("_Speed", 0);
 
-        //portalMat.SetFloat("_InnerFade", 1f);
-        orangeRingMat.SetFloat("_Speed", 1);
-        outerRingMat.SetFloat("_Speed", 0.5f);
-        innerRingMat.SetFloat("_Speed", 0.5f);
-
-        portalMat.SetFloat("_InnerFade", 0.67f);
+        portalMat.SetFloat("_InnerFade", 1f);
 
         testBoost = true;
     }
@@ -49,35 +44,44 @@ public class MegaBoost : MonoBehaviour
         if (other.TryGetComponent(out CheckpointTracker checkpoint))
         {
 
-            if (checkpoint.finishLinePass == 2 && checkpoint.CompareTag("Player"))
+            if (checkpoint.finishLinePass == 1 && checkpoint.CompareTag("Player"))
             {
                 StartCoroutine(enableEffects());
             }
 
-            else if (checkpoint.finishLinePass == 3)
+            else if (checkpoint.finishLinePass == 2)
             {
                 Debug.Log("<b><color=green> MEGA BOOST!!</color></b>");
 
                 //TO-DO: HIDE ALL UI 
 
-                VehicleMovement ship = other.GetComponent<VehicleMovement>();
-                ship.MegaBoostInitiated(boostDuration, speedIncreaseRate);
+                //VehicleMovement ship = other.GetComponent<VehicleMovement>();
+                //ship.MegaBoostInitiated(boostDuration, speedIncreaseRate);
 
-                AudioManager.Instance.Play("megaboost", 1, 1);
-            }
-        }
+                //AudioManager.Instance.Play("megaboost", 1, 1);
 
-        if (other.gameObject.CompareTag("Player"))
-        {
-            if (testBoost)
-            {
+
                 VehicleMovement ship = other.GetComponent<VehicleMovement>();
                 ship.MegaBoostInitiated(boostDuration, speedIncreaseRate);
                 AudioManager.Instance.Play("megaboost", 1, 1);
                 MusicController.instance.ChangeVolume(0, 0);
                 MusicController.instance.ChangeVolume(1, 0.8f);
+
+
             }
         }
+
+        //if (other.gameObject.CompareTag("Player"))
+        //{
+        //    if (testBoost)
+        //    {
+        //        VehicleMovement ship = other.GetComponent<VehicleMovement>();
+        //        ship.MegaBoostInitiated(boostDuration, speedIncreaseRate);
+        //        AudioManager.Instance.Play("megaboost", 1, 1);
+        //        MusicController.instance.ChangeVolume(0, 0);
+        //        MusicController.instance.ChangeVolume(1, 0.8f);
+        //    }
+        //}
     }
 
     IEnumerator enableEffects()

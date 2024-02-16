@@ -23,7 +23,7 @@ public class ShipVisuals : MonoBehaviour
     private VehicleMovement vehicle;
     private ShipComponents shipComponents;
 
-    private int shipID;
+    public int shipID;
 
     [Header("VFX")]
     [SerializeField] GameObject sparks;
@@ -210,8 +210,6 @@ public class ShipVisuals : MonoBehaviour
 
     void setupShip()
     {
-        if(ShipSelector.Instance == null && isPlayer) return;
-
         if (isPlayer)
         {
             shipID = ShipSelector.Instance.GetSelectedShip();
@@ -232,16 +230,16 @@ public class ShipVisuals : MonoBehaviour
             }
         }
 
-        else
-        {
-            for (int i = 0; i < transform.childCount; i++)
-            {
-                if (transform.GetChild(i).gameObject.activeSelf)
-                {
-                    shipID = i;
-                }
-            }
-        }
+        //else
+        //{
+        //    for (int i = 0; i < transform.childCount; i++)
+        //    {
+        //        if (transform.GetChild(i).gameObject.activeSelf)
+        //        {
+        //            shipID = i;
+        //        }
+        //    }
+        //}
 
         ShipComponents comp = transform.GetChild(shipID).GetComponent<ShipComponents>();
 

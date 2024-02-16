@@ -8,6 +8,7 @@ using UnityEngine.UI;
 
 public class SelectButton : MonoBehaviour
 {
+    private PlayerControlls playerControlls;
 
     public UnityEvent onPress;
     public Animator button;
@@ -15,7 +16,15 @@ public class SelectButton : MonoBehaviour
     public GameObject otherShip1;
     public GameObject otherShip2;
     public Material ShipLogo;
-    public MeshRenderer DisplayRoomWall;
+    public MeshRenderer DisplayRoomWall; 
+
+    public bool buttonPressed;
+
+
+    private void Awake()
+    {
+        playerControlls = new PlayerControlls();
+    }
 
     private void Update()
     {
@@ -27,10 +36,24 @@ public class SelectButton : MonoBehaviour
             otherShip2.SetActive(false);
             DisplayRoomWall.material = ShipLogo;
         }
-        if (Gamepad.current.buttonSouth.wasPressedThisFrame)
+
+        buttonPressed = playerControlls.ShipControls.Select.IsPressed();
+
+        if (buttonPressed)
         {
             Debug.Log("Pressed");
             onPress.Invoke();
         }
     }
+
+    private void OnEnable()
+    {
+        playerControlls.Enable();
+    }
+
+    private void OnDisable()
+    {
+        playerControlls.Disable();
+    }
+
 }

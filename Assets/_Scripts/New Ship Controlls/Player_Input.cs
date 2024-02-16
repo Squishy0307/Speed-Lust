@@ -20,6 +20,8 @@ public class Player_Input : MonoBehaviour
     CinemachineTransposer transposer;
     CinemachineComposer composer;
 
+    [SerializeField] GameObject Buttons;
+
     private void Awake()
     {
         vehicalMovement = GetComponent<VehicleMovement>();
@@ -27,6 +29,7 @@ public class Player_Input : MonoBehaviour
         composer = cam.GetCinemachineComponent<CinemachineComposer>();
 
         playerControlls = new PlayerControlls();
+        Buttons.SetActive(false);
     }
 
     private void Start()
@@ -60,6 +63,21 @@ public class Player_Input : MonoBehaviour
             transposer.m_FollowOffset.x = Mathf.Lerp(transposer.m_FollowOffset.x, 0, Time.deltaTime * camSmooth);
             composer.m_TrackedObjectOffset.x = Mathf.Lerp(composer.m_TrackedObjectOffset.x, 0, camSmoothEase.Evaluate(Time.deltaTime * camSmooth));
         }
+
+        if (Buttons.activeSelf)
+        {
+            if (playerControlls.ShipControls.Select.IsPressed())
+            {
+                Debug.Log("PressedA");
+                Scene_Manager.Instance.LoadScene(2);
+            }
+            if (playerControlls.ShipControls.Exit.IsPressed())
+            {
+                Debug.Log("PressedB");
+                Scene_Manager.Instance.LoadScene(1);
+            }
+        }
+
     }
 
     private void OnEnable()

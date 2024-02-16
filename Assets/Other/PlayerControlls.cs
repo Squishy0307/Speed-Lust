@@ -53,6 +53,24 @@ public partial class @PlayerControlls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Select"",
+                    ""type"": ""Button"",
+                    ""id"": ""a070f458-d453-4da0-b016-c18a16ce1778"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Exit"",
+                    ""type"": ""Button"",
+                    ""id"": ""5baf168f-973a-4d8b-bce6-279ae5a4989a"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -143,6 +161,50 @@ public partial class @PlayerControlls: IInputActionCollection2, IDisposable
                     ""action"": ""Rudder"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""07216d13-7e72-4eca-98c1-4f3aa00b5367"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Select"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ce176b2d-a58c-4f27-bc12-ea8297695318"",
+                    ""path"": ""<Keyboard>/enter"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Select"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""73e05069-9a33-4aa9-96be-9d909fde5cea"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Exit"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d95d611e-5c24-4cfd-be3e-84fcdce643d6"",
+                    ""path"": ""<Gamepad>/buttonEast"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Exit"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -154,6 +216,8 @@ public partial class @PlayerControlls: IInputActionCollection2, IDisposable
         m_ShipControls_Thruster = m_ShipControls.FindAction("Thruster", throwIfNotFound: true);
         m_ShipControls_Rudder = m_ShipControls.FindAction("Rudder", throwIfNotFound: true);
         m_ShipControls_Brake = m_ShipControls.FindAction("Brake", throwIfNotFound: true);
+        m_ShipControls_Select = m_ShipControls.FindAction("Select", throwIfNotFound: true);
+        m_ShipControls_Exit = m_ShipControls.FindAction("Exit", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -218,6 +282,8 @@ public partial class @PlayerControlls: IInputActionCollection2, IDisposable
     private readonly InputAction m_ShipControls_Thruster;
     private readonly InputAction m_ShipControls_Rudder;
     private readonly InputAction m_ShipControls_Brake;
+    private readonly InputAction m_ShipControls_Select;
+    private readonly InputAction m_ShipControls_Exit;
     public struct ShipControlsActions
     {
         private @PlayerControlls m_Wrapper;
@@ -225,6 +291,8 @@ public partial class @PlayerControlls: IInputActionCollection2, IDisposable
         public InputAction @Thruster => m_Wrapper.m_ShipControls_Thruster;
         public InputAction @Rudder => m_Wrapper.m_ShipControls_Rudder;
         public InputAction @Brake => m_Wrapper.m_ShipControls_Brake;
+        public InputAction @Select => m_Wrapper.m_ShipControls_Select;
+        public InputAction @Exit => m_Wrapper.m_ShipControls_Exit;
         public InputActionMap Get() { return m_Wrapper.m_ShipControls; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -243,6 +311,12 @@ public partial class @PlayerControlls: IInputActionCollection2, IDisposable
             @Brake.started += instance.OnBrake;
             @Brake.performed += instance.OnBrake;
             @Brake.canceled += instance.OnBrake;
+            @Select.started += instance.OnSelect;
+            @Select.performed += instance.OnSelect;
+            @Select.canceled += instance.OnSelect;
+            @Exit.started += instance.OnExit;
+            @Exit.performed += instance.OnExit;
+            @Exit.canceled += instance.OnExit;
         }
 
         private void UnregisterCallbacks(IShipControlsActions instance)
@@ -256,6 +330,12 @@ public partial class @PlayerControlls: IInputActionCollection2, IDisposable
             @Brake.started -= instance.OnBrake;
             @Brake.performed -= instance.OnBrake;
             @Brake.canceled -= instance.OnBrake;
+            @Select.started -= instance.OnSelect;
+            @Select.performed -= instance.OnSelect;
+            @Select.canceled -= instance.OnSelect;
+            @Exit.started -= instance.OnExit;
+            @Exit.performed -= instance.OnExit;
+            @Exit.canceled -= instance.OnExit;
         }
 
         public void RemoveCallbacks(IShipControlsActions instance)
@@ -278,5 +358,7 @@ public partial class @PlayerControlls: IInputActionCollection2, IDisposable
         void OnThruster(InputAction.CallbackContext context);
         void OnRudder(InputAction.CallbackContext context);
         void OnBrake(InputAction.CallbackContext context);
+        void OnSelect(InputAction.CallbackContext context);
+        void OnExit(InputAction.CallbackContext context);
     }
 }

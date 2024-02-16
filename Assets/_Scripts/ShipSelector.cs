@@ -12,7 +12,7 @@ public class ShipSelector : MonoBehaviour
     public GameObject currentShip;
     public GameObject[] ships;
 
-    private int currentShipIndex = 0;
+    public int currentShipIndex = 0;
 
     private void Awake()
     {
@@ -29,26 +29,26 @@ public class ShipSelector : MonoBehaviour
 
     void Start()
     {
-        foreach (GameObject ship in ships)
-        {
-            if (ship.activeSelf)
-            {
-                currentShip = ship;
-            }
-        }
-        currentShip = ships[currentShipIndex];
-        shipName.text = currentShip.name;
+        //foreach (GameObject ship in ships)
+        //{
+        //    if (ship.activeSelf)
+        //    {
+        //        currentShip = ship;
+        //    }
+        //}
+        //currentShip = ships[currentShipIndex];
+        //shipName.text = currentShip.name;
 
-        for (int i = 0; i < ships.Length; i++)
-        {
-            if (i == 0)
-            {
-                ships[i].SetActive(true);
-                return;
-            }
+        //for (int i = 0; i < ships.Length; i++)
+        //{
+        //    if (i == 0)
+        //    {
+        //        ships[i].SetActive(true);
+        //        return;
+        //    }
 
-            ships[i].SetActive(false);
-        }
+        //    ships[i].SetActive(false);
+        //}
     }
 
     //private void Update()
@@ -61,37 +61,37 @@ public class ShipSelector : MonoBehaviour
     //        }
     //    }
     //}
-    public void NextShip()
-    {
-        ships[currentShipIndex].SetActive(false);
-        currentShipIndex++;
+    //public void NextShip()
+    //{
+    //    ships[currentShipIndex].SetActive(false);
+    //    currentShipIndex++;
 
-        if(currentShipIndex >= ships.Length)
-        {
-            currentShipIndex = 0;
-        }
+    //    if(currentShipIndex >= ships.Length)
+    //    {
+    //        currentShipIndex = 0;
+    //    }
 
-        ships[currentShipIndex].SetActive(true);
+    //    ships[currentShipIndex].SetActive(true);
 
-        currentShip = ships[currentShipIndex];
-        shipName.text = currentShip.name;
-    }
+    //    currentShip = ships[currentShipIndex];
+    //    shipName.text = currentShip.name;
+    //}
 
-    public void PreviousShip()
-    {
-        ships[currentShipIndex].SetActive(false);
-        currentShipIndex--;
+    //public void PreviousShip()
+    //{
+    //    ships[currentShipIndex].SetActive(false);
+    //    currentShipIndex--;
 
-        if (currentShipIndex < 0)
-        {
-            currentShipIndex = ships.Length - 1;
-        }
+    //    if (currentShipIndex < 0)
+    //    {
+    //        currentShipIndex = ships.Length - 1;
+    //    }
 
-        ships[currentShipIndex].SetActive(true);
+    //    ships[currentShipIndex].SetActive(true);
 
-        currentShip = ships[currentShipIndex];
-        shipName.text = currentShip.name;
-    }
+    //    currentShip = ships[currentShipIndex];
+    //    shipName.text = currentShip.name;
+    //}
 
     public int GetSelectedShip()
     {

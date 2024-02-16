@@ -4,7 +4,6 @@ using TMPro;
 using UnityEngine;
 using TMPro;
 using UnityEngine.InputSystem;
-using UnityEngine.SceneManagement;
 
 public class CheckpointTracker : MonoBehaviour
 {
@@ -42,12 +41,12 @@ public class CheckpointTracker : MonoBehaviour
 
     bool joshBool; // enabled at end of race. makes engine sound stop. found at the beginning of Update().
 
-
     // Start is called before the first frame update
     void Start()
     {
         //EndOfRaceUI.SetActive(false);
         movement = GetComponent<VehicleMovement>();
+
         rb = GetComponent<Rigidbody>(); 
         startCountdown = FindObjectOfType<StartCountdown>();
         Buttons.SetActive(false);
@@ -79,13 +78,13 @@ public class CheckpointTracker : MonoBehaviour
             GetComponent<AudioSource>().volume -= Time.deltaTime / 2;
         }
 
-        if(ControlsUI.activeSelf)
+        if(ControlsUI.activeSelf && movement.isPlayer)
         {
-            if (Gamepad.current.rightTrigger.wasPressedThisFrame)
+            if (movement.GetCurrentSpeed() >= 5f)
             {
                 Debug.Log("Pressed");
                 ControlsUI.SetActive(false);
-                startCountdown.BeginCountdown();
+                //startCountdown.BeginCountdown();
             }
         }
         if (finishLinePass >= 1)
@@ -97,19 +96,19 @@ public class CheckpointTracker : MonoBehaviour
             //Debug.Log(elapsedTime);
         }
 
-        if(Buttons.activeSelf)
-        {
-            if (Gamepad.current.buttonSouth.wasPressedThisFrame)
-            {
-                Debug.Log("PressedA");
-                SceneManager.LoadScene(2);
-            }
-            if (Gamepad.current.buttonEast.wasPressedThisFrame)
-            {
-                Debug.Log("PressedB");
-                SceneManager.LoadScene(1);
-            }
-        }
+        //if(Buttons.activeSelf)
+        //{
+        //    if (playerControlls.ShipControls.Select.IsPressed())
+        //    {
+        //        Debug.Log("PressedA");
+        //        Scene_Manager.Instance.LoadScene(2);
+        //    }
+        //    if (playerControlls.ShipControls.Exit.IsPressed())
+        //    {
+        //        Debug.Log("PressedB");
+        //        Scene_Manager.Instance.LoadScene(1);
+        //    }
+        //}
 
         if(gameObject.CompareTag("Player"))
         {

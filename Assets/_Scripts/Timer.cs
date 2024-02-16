@@ -87,7 +87,7 @@ public class Timer : MonoBehaviour
             hasStartedLap = true;
             startTime = Time.time;
 
-            LBT.DoLeaderboard();
+            //LBT.DoLeaderboard();
 
             if (other.gameObject.GetComponent<CheckpointTracker>().elapsedTime >= 1 && other.gameObject.GetComponent<CheckpointTracker>().finishLinePass >= 1)
             {
