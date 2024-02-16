@@ -143,6 +143,8 @@ public class VehicleMovement : MonoBehaviour
                 Vector3 p = Vector3.ProjectOnPlane(transform.forward, groundNormal);
                 Quaternion r = Quaternion.LookRotation(p, groundNormal);             
                 rb.rotation = r;
+
+                AudioManager.Instance.Play("land", 1, 1);
             }
 
             //...and finally apply the hover and gravity forces

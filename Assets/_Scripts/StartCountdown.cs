@@ -12,6 +12,7 @@ public class StartCountdown : MonoBehaviour
     public float startingTime = 3;
     public bool timerStarted = false;
     public GameObject MusicDude;
+    public GameObject player;
 
     void Start()
     {
@@ -22,6 +23,7 @@ public class StartCountdown : MonoBehaviour
 
     public void BeginCountdown()
     {
+        player.GetComponent<AudioSource>().Play();
         countdown.SetActive(false);
         currentTime = startingTime;
         StartCoroutine(Countdown(Mathf.FloorToInt(startingTime)));

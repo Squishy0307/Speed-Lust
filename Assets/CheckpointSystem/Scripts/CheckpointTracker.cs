@@ -40,6 +40,8 @@ public class CheckpointTracker : MonoBehaviour
     public Animator leaderboardAnim;
     public Animator bestTimeAnim;
 
+    bool joshBool; // enabled at end of race. makes engine sound stop. found at the beginning of Update().
+
 
     // Start is called before the first frame update
     void Start()
@@ -71,6 +73,12 @@ public class CheckpointTracker : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (joshBool)
+        {
+            GetComponent<AudioSource>().pitch -= Time.deltaTime / 2;
+            GetComponent<AudioSource>().volume -= Time.deltaTime / 2;
+        }
+
         if(ControlsUI.activeSelf)
         {
             if (Gamepad.current.rightTrigger.wasPressedThisFrame)
@@ -239,5 +247,6 @@ public class CheckpointTracker : MonoBehaviour
         GameManager.Instance.RaceStarted = false;
         Buttons.SetActive(true);
         EndOfRaceUI.SetActive(true);
+        joshBool = true;
     }
 }
