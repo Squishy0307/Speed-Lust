@@ -30,17 +30,16 @@ public class CheckpointTracker : MonoBehaviour
     public Transform respawnPoint;
     private Rigidbody rb;
     private VehicleMovement movement;
-    public TextMeshProUGUI prevLapTextAI;
-    public TextMeshProUGUI bestLapAI;
     public TextMeshProUGUI lapText;
     public float bestTime;
     public string bestTimeDisplay;
-    public LeaderboardTimes LBT;
     public GameObject EndOfRaceUI;
+    public GameObject ControlsUI;
     public GameObject disableAtEnd;
     public Quaternion rememberRotation;
     public Animator leaderboardAnim;
     public Animator bestTimeAnim;
+
 
     // Start is called before the first frame update
     void Start()
@@ -72,6 +71,15 @@ public class CheckpointTracker : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(ControlsUI.activeSelf)
+        {
+            if (Gamepad.current.rightTrigger.wasPressedThisFrame)
+            {
+                Debug.Log("Pressed");
+                ControlsUI.SetActive(false);
+                startCountdown.BeginCountdown();
+            }
+        }
         if (finishLinePass >= 1)
         {
 

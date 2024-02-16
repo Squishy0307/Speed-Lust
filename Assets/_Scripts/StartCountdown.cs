@@ -15,6 +15,13 @@ public class StartCountdown : MonoBehaviour
 
     void Start()
     {
+        //countdown.SetActive(false);
+        //currentTime = startingTime;
+        //StartCoroutine(Countdown(Mathf.FloorToInt(startingTime)));
+    }
+
+    public void BeginCountdown()
+    {
         countdown.SetActive(false);
         currentTime = startingTime;
         StartCoroutine(Countdown(Mathf.FloorToInt(startingTime)));

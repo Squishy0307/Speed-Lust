@@ -83,7 +83,7 @@ public class Timer : MonoBehaviour
         if (other.CompareTag("AI") && !hasEnteredCheckpoint )
         {
             hasEnteredCheckpoint = true;
-            other.gameObject.GetComponent<CheckpointTracker>().prevLapTextAI.text = "Last Lap: " + other.gameObject.GetComponent<CheckpointTracker>().elapsedTime.ToString("00:00");
+            //other.gameObject.GetComponent<CheckpointTracker>().prevLapTextAI.text = "Last Lap: " + other.gameObject.GetComponent<CheckpointTracker>().elapsedTime.ToString("00:00");
             hasStartedLap = true;
             startTime = Time.time;
 
@@ -100,7 +100,7 @@ public class Timer : MonoBehaviour
             {
 
                 bestTimes.Sort();
-                other.gameObject.GetComponent<CheckpointTracker>().bestLapAI.text = "Best Lap: " + bestTimes[0].ToString("00:00");
+                //other.gameObject.GetComponent<CheckpointTracker>().bestLapAI.text = "Best Lap: " + bestTimes[0].ToString("00:00");
                 currentAIBestTime = bestTimes[0];
 
             }

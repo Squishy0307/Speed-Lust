@@ -43,7 +43,7 @@ public class LeaderboardTimes : MonoBehaviour
         sb.Clear();
 
         //sort the cars by number of checkpoints passed (descending=most to least)
-        car = car.OrderByDescending(x => x.bestLapAI).ToList();
+        //car = car.OrderByDescending(x => x.bestLapAI).ToList();
 
         //compose the text list of cars
         for (int i = 0; i < car.Count; i++)
