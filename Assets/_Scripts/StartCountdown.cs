@@ -16,6 +16,7 @@ public class StartCountdown : MonoBehaviour
 
     void Start()
     {
+        player.GetComponent<AudioSource>().Play();
         countdown.SetActive(false);
         currentTime = startingTime;
         StartCoroutine(Countdown(Mathf.FloorToInt(startingTime)));
