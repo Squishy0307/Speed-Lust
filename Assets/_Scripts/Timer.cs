@@ -50,7 +50,7 @@ public class Timer : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player") && !hasEnteredCheckpoint && !startCountdown.timerStarted)
+        if (other.CompareTag("Player") && !hasEnteredCheckpoint)
         {
             hasEnteredCheckpoint = true;
             //prevLapText.text = "Last Lap: " + elapsedTime.ToString("00:00");
@@ -80,31 +80,32 @@ public class Timer : MonoBehaviour
             }
         }
 
-        if (other.CompareTag("AI") && !hasEnteredCheckpoint )
-        {
-            hasEnteredCheckpoint = true;
-            //other.gameObject.GetComponent<CheckpointTracker>().prevLapTextAI.text = "Last Lap: " + other.gameObject.GetComponent<CheckpointTracker>().elapsedTime.ToString("00:00");
-            hasStartedLap = true;
-            startTime = Time.time;
+        //if (other.CompareTag("AI") && !hasEnteredCheckpoint )
+        //{
+        //    Debug.Log(other.gameObject.name);
+        //    hasEnteredCheckpoint = true;
+        //    //other.gameObject.GetComponent<CheckpointTracker>().prevLapTextAI.text = "Last Lap: " + other.gameObject.GetComponent<CheckpointTracker>().elapsedTime.ToString("00:00");
+        //    hasStartedLap = true;
+        //    startTime = Time.time;
 
-            //LBT.DoLeaderboard();
+        //    //LBT.DoLeaderboard();
 
-            if (other.gameObject.GetComponent<CheckpointTracker>().elapsedTime >= 1 && other.gameObject.GetComponent<CheckpointTracker>().finishLinePass >= 1)
-            {
-                //Debug.Log("Working");
-                bestTimes.Add(other.gameObject.GetComponent<CheckpointTracker>().elapsedTime);
+        //    if (other.gameObject.GetComponent<CheckpointTracker>().elapsedTime >= 1 && other.gameObject.GetComponent<CheckpointTracker>().finishLinePass >= 1)
+        //    {
+        //        //Debug.Log("Working");
+        //        //bestTimes.Add(other.gameObject.GetComponent<CheckpointTracker>().elapsedTime);
 
-            }
+        //    }
 
-            if (bestTimes.Count > 0)
-            {
+        //    if (bestTimes.Count > 0)
+        //    {
 
-                bestTimes.Sort();
-                //other.gameObject.GetComponent<CheckpointTracker>().bestLapAI.text = "Best Lap: " + bestTimes[0].ToString("00:00");
-                currentAIBestTime = bestTimes[0];
+        //        bestTimes.Sort();
+        //        //other.gameObject.GetComponent<CheckpointTracker>().bestLapAI.text = "Best Lap: " + bestTimes[0].ToString("00:00");
+        //        currentAIBestTime = bestTimes[0];
 
-            }
-        }
+        //    }
+        //}
 
         else if(!hasEnteredCheckpoint && !startCountdown.timerStarted)
         {

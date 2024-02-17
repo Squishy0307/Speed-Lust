@@ -185,7 +185,7 @@ public class CheckpointTracker : MonoBehaviour
         if(collision.gameObject.CompareTag("KillZone"))
         {
             Debug.Log("Killzoned");
-            rememberRotation = gameObject.transform.rotation;
+            //rememberRotation = gameObject.transform.rotation;
             StartCoroutine(Respawn());
         }
     }
@@ -198,8 +198,9 @@ public class CheckpointTracker : MonoBehaviour
         }
         
         movement.respawning = true;
-        rb.velocity = new Vector3(0, 0, 0);
+        
         yield return new WaitForSeconds(0.75f);
+        rb.velocity = new Vector3(0, 0, 0);
         transform.position = respawnPoint.transform.position + new Vector3(0, 0, 0);
         //transform.eulerAngles = new Vector3(respawnPoint.transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z);
         //transform.rotation = respawnPoint.transform.rotation;
