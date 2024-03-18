@@ -26,13 +26,13 @@ public class ConfettiTrigger : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Player"))
         {
-            Confetti();
+            StartCoroutine(Confetti());
         }
     }
 
     IEnumerator Confetti()
     {
-        yield return new WaitForSeconds(3);
+        yield return new WaitForSeconds(0.01f);
         if (player.finishLinePass >= 2)
         {
             foreach (GameObject fetti in confetti)
