@@ -24,6 +24,7 @@ public class BoostPickup : MonoBehaviour
             {
                 GameManager.Instance.obrCollected();
                 Vibration_Manager.Instance.VibrateNow(0.3f, 0.3f, 0.5f);
+                AudioManager.Instance.Play("collect", 1, 1);
             }
 
             other.gameObject.GetComponent<ShipVisuals>().playElectricParticles();
