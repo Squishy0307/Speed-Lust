@@ -4,6 +4,7 @@ using UnityEngine;
 using DG.Tweening;
 using Cinemachine;
 using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 public class ShipVisuals : MonoBehaviour
 {
@@ -32,6 +33,7 @@ public class ShipVisuals : MonoBehaviour
     [SerializeField] Material spdLines;
     [SerializeField] MeshRenderer wind;
     [SerializeField] ParticleSystem boostSonicBurst;
+    [SerializeField] ParticleSystem electric;
 
     public Ease burstCurve;
 
@@ -120,9 +122,17 @@ public class ShipVisuals : MonoBehaviour
         }
     }
 
+    public void playElectricParticles()
+    {
+        electric.Play();
+    }
+
     public void BoostFOVChange()
     {
-        StartCoroutine(FovChange());
+        if (isPlayer)
+        {
+            StartCoroutine(FovChange());
+        }
         boostSonicBurst.Play(); 
     }
 
@@ -216,7 +226,7 @@ public class ShipVisuals : MonoBehaviour
 
             for (int i = 0; i < transform.childCount; i++)
             {
-                if (transform.GetChild(i).name != "Boost_Burst")
+                if (transform.GetChild(i).name != "Boost_Burst") 
                 {
                     if (i == shipID)
                     {
@@ -226,6 +236,11 @@ public class ShipVisuals : MonoBehaviour
                     {
                         transform.GetChild(i).gameObject.SetActive(false);
                     }
+                }
+
+                if (transform.GetChild(i).name == "Electric")
+                {
+                    transform.GetChild(i).gameObject.SetActive(true);
                 }
             }
         }
@@ -264,10 +279,13 @@ public class ShipVisuals : MonoBehaviour
 
     private void OnDisable()
     {
-        spdBlur.SetFloat("_Blur_Intensity", 0);
-        spdDistortion.SetFloat("_Mask_Intensity", 0);
-        spdLines.SetFloat("_Effect_Intensity", 0);
-        spdLines.SetFloat("_Line_Amount", 3.7f);
+        if (spdBlur != null)
+        {
+            spdBlur.SetFloat("_Blur_Intensity", 0);
+            spdDistortion.SetFloat("_Mask_Intensity", 0);
+            spdLines.SetFloat("_Effect_Intensity", 0);
+            spdLines.SetFloat("_Line_Amount", 3.7f);
+        }
     }
 }
 

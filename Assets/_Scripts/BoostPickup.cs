@@ -13,7 +13,7 @@ public class BoostPickup : MonoBehaviour
     {
         col = GetComponent<Collider>();
         rend = GetComponent<MeshRenderer>();
-        transform.DOMoveY(transform.position.y + 2f, 0.5f).SetEase(Ease.OutSine).SetLoops(-1, LoopType.Yoyo);
+        transform.DOMoveY(transform.position.y + 1f, 0.5f).SetEase(Ease.OutSine).SetLoops(-1, LoopType.Yoyo);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -23,7 +23,10 @@ public class BoostPickup : MonoBehaviour
             if (other.gameObject.CompareTag("Player"))
             {
                 GameManager.Instance.obrCollected();
+                Vibration_Manager.Instance.VibrateNow(0.3f, 0.3f, 0.5f);
             }
+
+            other.gameObject.GetComponent<ShipVisuals>().playElectricParticles();
 
             StartCoroutine(disableMe());
         }
