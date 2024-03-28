@@ -47,6 +47,9 @@ public class MegaBoost : MonoBehaviour
             if (checkpoint.finishLinePass == 1 && checkpoint.CompareTag("Player"))
             {
                 StartCoroutine(enableEffects());
+
+                MusicController.instance.ChangeVolume(0, 0);
+                MusicController.instance.ChangeVolume(1, 0.8f);
             }
 
             else if (checkpoint.finishLinePass == 2)
@@ -67,8 +70,8 @@ public class MegaBoost : MonoBehaviour
                 if (other.gameObject.CompareTag("Player"))
                 {
                     AudioManager.Instance.Play("megaboost", 1, 1);
-                    MusicController.instance.ChangeVolume(0, 0);
-                    MusicController.instance.ChangeVolume(1, 0.8f);
+                    //MusicController.instance.ChangeVolume(0, 0);
+                    //MusicController.instance.ChangeVolume(1, 0.8f);
                 }
 
 
