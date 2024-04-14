@@ -39,9 +39,6 @@ public class Player_Input : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetButtonDown("Cancel") && !Application.isEditor)
-            Application.Quit();
-
         thruster = playerControlls.ShipControls.Thruster.ReadValue<float>();
         rudder = playerControlls.ShipControls.Rudder.ReadValue<Vector2>().x;
         isBraking = playerControlls.ShipControls.Brake.IsPressed();

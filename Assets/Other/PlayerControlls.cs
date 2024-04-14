@@ -71,6 +71,15 @@ public partial class @PlayerControlls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""UIMove"",
+                    ""type"": ""Value"",
+                    ""id"": ""e1dc0e37-4fd7-4f07-a61b-d0cbf2cc758e"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -186,7 +195,7 @@ public partial class @PlayerControlls: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""73e05069-9a33-4aa9-96be-9d909fde5cea"",
+                    ""id"": ""cb70830d-7dbc-4f0e-8fb3-3196dcd3fa89"",
                     ""path"": ""<Keyboard>/escape"",
                     ""interactions"": """",
                     ""processors"": """",
@@ -197,7 +206,7 @@ public partial class @PlayerControlls: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""d95d611e-5c24-4cfd-be3e-84fcdce643d6"",
+                    ""id"": ""ab97c38d-88e3-4905-b9aa-41dea8e03bcd"",
                     ""path"": ""<Gamepad>/buttonEast"",
                     ""interactions"": """",
                     ""processors"": """",
@@ -205,6 +214,72 @@ public partial class @PlayerControlls: IInputActionCollection2, IDisposable
                     ""action"": ""Exit"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""bd7c1897-47a9-4121-9b5c-dbcd252c11d9"",
+                    ""path"": ""<Gamepad>/leftStick"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""UIMove"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""2D Vector"",
+                    ""id"": ""eacb0cd0-7f12-46f6-94cd-b700031e558a"",
+                    ""path"": ""2DVector"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""UIMove"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""up"",
+                    ""id"": ""f8164bc1-db54-4fc2-a422-90229b68f2d1"",
+                    ""path"": ""<Keyboard>/w"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""UIMove"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""down"",
+                    ""id"": ""da281816-9213-4d1d-a117-0f5d5da4cc22"",
+                    ""path"": ""<Keyboard>/s"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""UIMove"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""left"",
+                    ""id"": ""f0544d3c-19c1-4f3e-bc1c-21b6c00729bd"",
+                    ""path"": ""<Keyboard>/a"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""UIMove"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""right"",
+                    ""id"": ""65cd6cc3-568d-4321-9411-15ec4e46c528"",
+                    ""path"": ""<Keyboard>/d"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""UIMove"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
                 }
             ]
         }
@@ -218,6 +293,7 @@ public partial class @PlayerControlls: IInputActionCollection2, IDisposable
         m_ShipControls_Brake = m_ShipControls.FindAction("Brake", throwIfNotFound: true);
         m_ShipControls_Select = m_ShipControls.FindAction("Select", throwIfNotFound: true);
         m_ShipControls_Exit = m_ShipControls.FindAction("Exit", throwIfNotFound: true);
+        m_ShipControls_UIMove = m_ShipControls.FindAction("UIMove", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -284,6 +360,7 @@ public partial class @PlayerControlls: IInputActionCollection2, IDisposable
     private readonly InputAction m_ShipControls_Brake;
     private readonly InputAction m_ShipControls_Select;
     private readonly InputAction m_ShipControls_Exit;
+    private readonly InputAction m_ShipControls_UIMove;
     public struct ShipControlsActions
     {
         private @PlayerControlls m_Wrapper;
@@ -293,6 +370,7 @@ public partial class @PlayerControlls: IInputActionCollection2, IDisposable
         public InputAction @Brake => m_Wrapper.m_ShipControls_Brake;
         public InputAction @Select => m_Wrapper.m_ShipControls_Select;
         public InputAction @Exit => m_Wrapper.m_ShipControls_Exit;
+        public InputAction @UIMove => m_Wrapper.m_ShipControls_UIMove;
         public InputActionMap Get() { return m_Wrapper.m_ShipControls; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -317,6 +395,9 @@ public partial class @PlayerControlls: IInputActionCollection2, IDisposable
             @Exit.started += instance.OnExit;
             @Exit.performed += instance.OnExit;
             @Exit.canceled += instance.OnExit;
+            @UIMove.started += instance.OnUIMove;
+            @UIMove.performed += instance.OnUIMove;
+            @UIMove.canceled += instance.OnUIMove;
         }
 
         private void UnregisterCallbacks(IShipControlsActions instance)
@@ -336,6 +417,9 @@ public partial class @PlayerControlls: IInputActionCollection2, IDisposable
             @Exit.started -= instance.OnExit;
             @Exit.performed -= instance.OnExit;
             @Exit.canceled -= instance.OnExit;
+            @UIMove.started -= instance.OnUIMove;
+            @UIMove.performed -= instance.OnUIMove;
+            @UIMove.canceled -= instance.OnUIMove;
         }
 
         public void RemoveCallbacks(IShipControlsActions instance)
@@ -360,5 +444,6 @@ public partial class @PlayerControlls: IInputActionCollection2, IDisposable
         void OnBrake(InputAction.CallbackContext context);
         void OnSelect(InputAction.CallbackContext context);
         void OnExit(InputAction.CallbackContext context);
+        void OnUIMove(InputAction.CallbackContext context);
     }
 }

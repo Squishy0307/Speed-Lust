@@ -11,6 +11,9 @@ public class ShipSelectDisplay : MonoBehaviour
     public GameObject ship3;
     public UnityEvent onSelect;
 
+    public Material[] ShipLogo;
+    public MeshRenderer DisplayRoomWall;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -31,6 +34,7 @@ public class ShipSelectDisplay : MonoBehaviour
         ship2.SetActive(false);
         ship3.SetActive(false);
         ShipSelector.Instance.currentShipIndex = 0;
+        DisplayRoomWall.material = ShipLogo[0];
     }
 
     public void HighlightShip2()
@@ -39,6 +43,7 @@ public class ShipSelectDisplay : MonoBehaviour
         ship2.SetActive(true);
         ship3.SetActive(false);
         ShipSelector.Instance.currentShipIndex = 1;
+        DisplayRoomWall.material = ShipLogo[1];
     }
 
     public void HighlightShip3()
@@ -47,5 +52,6 @@ public class ShipSelectDisplay : MonoBehaviour
         ship2.SetActive(false);
         ship3.SetActive(true);
         ShipSelector.Instance.currentShipIndex = 2;
+        DisplayRoomWall.material = ShipLogo[2];
     }
 }

@@ -195,7 +195,7 @@ public class ShipVisuals : MonoBehaviour
         if (!isBreaking)
         {
             isBreaking = true;
-            yield return new WaitForSeconds(1.5f);
+            yield return new WaitForSeconds(0.6f);
 
             for (int i = 0; i < shipParts.Length; i++)
             {
@@ -209,10 +209,11 @@ public class ShipVisuals : MonoBehaviour
 
                 Destroy(shipParts[i],3);
                 //shipParts[i].GetComponent<RemoveOnStart>().enabled = true;
+                vehicle.GetShipTransform().DOShakePosition(0.3f,0.6f,30,30,false);
 
-                vehicle.GetShipTransform().DOShakePosition(0.3f,0.12f,30,30,false);
+                float t = Random.Range(0.4f, 0.7f);
 
-                float t = Random.Range(0.7f, 1.8f);
+                SpawnSparks(shipParts[i].transform.position,Vector3.zero);
                 yield return new WaitForSeconds(t);
             }
         }
