@@ -26,7 +26,7 @@ public class CheckpointTracker : MonoBehaviour
     public float startTime;
     private StartCountdown startCountdown;
     public string Name;
-    public Transform respawnPoint;
+    public GameObject respawnPoint;
     private Rigidbody rb;
     private VehicleMovement movement;
     public TextMeshProUGUI lapText;
@@ -39,6 +39,8 @@ public class CheckpointTracker : MonoBehaviour
     public Animator leaderboardAnim;
     public Animator bestTimeAnim;
 
+    public bool lastLapStarted;
+
     bool joshBool; // enabled at end of race. makes engine sound stop. found at the beginning of Update().
 
     // Start is called before the first frame update
@@ -46,7 +48,7 @@ public class CheckpointTracker : MonoBehaviour
     {
         //EndOfRaceUI.SetActive(false);
         movement = GetComponent<VehicleMovement>();
-
+        lastLapStarted = false;
         rb = GetComponent<Rigidbody>(); 
         startCountdown = FindObjectOfType<StartCountdown>();
         Buttons.SetActive(false);
@@ -120,8 +122,23 @@ public class CheckpointTracker : MonoBehaviour
         
     }
 
+    public IEnumerator OnLastLap()
+    {
+        yield return new WaitForSeconds(5);
+
+        foreach(GameObject go in movement.killOnLast)
+        {
+            go.SetActive(false);
+        }
+        lastLapStarted = true;
+    }
+
     private void OnTriggerEnter(Collider other)
     {
+        if(other.gameObject.CompareTag("RespawnPoint"))
+        {
+            respawnPoint = other.gameObject;
+        }
         if (script_checkpoints != null)
         {
             if (other.CompareTag("Checkpoint") == true && other.transform == gameObject.GetComponent<VehicleMovement>().nextCheckpoint.transform)
@@ -140,7 +157,10 @@ public class CheckpointTracker : MonoBehaviour
                     finishLinePass += 1;
                     checkpoint_name = other.name;
                     //LBT.DoLeaderboard();
-
+                    if (finishLinePass >= 2 && finishLinePass <3 && gameObject.CompareTag("Player"))
+                    {
+                        StartCoroutine(OnLastLap());
+                    }
                     if (finishLinePass >= 3 && gameObject.CompareTag("Player"))
                     {
                         EndRace();
@@ -205,7 +225,8 @@ public class CheckpointTracker : MonoBehaviour
         //transform.eulerAngles = new Vector3(respawnPoint.transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z);
         //transform.rotation = respawnPoint.transform.rotation;
         //transform.rotation = rememberRotation;
-        gameObject.transform.LookAt(movement.nextCheckpoint);
+        //gameObject.transform.LookAt(movement.nextCheckpoint);
+        gameObject.transform.forward = respawnPoint.transform.right;
         
         movement.respawning = false;
     }

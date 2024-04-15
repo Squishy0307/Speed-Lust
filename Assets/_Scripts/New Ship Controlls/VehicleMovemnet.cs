@@ -66,6 +66,8 @@ public class VehicleMovement : MonoBehaviour
     public int carNumber;
     public int CarPosition;
 
+    public GameObject[] killOnLast;
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();

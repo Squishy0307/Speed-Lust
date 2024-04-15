@@ -33,7 +33,7 @@ public class ConfettiTrigger : MonoBehaviour
     IEnumerator Confetti()
     {
         yield return new WaitForSeconds(0.01f);
-        if (player.finishLinePass >= 2)
+        if (player.lastLapStarted)
         {
             foreach (GameObject fetti in confetti)
             {

@@ -26,7 +26,7 @@ public class RespawnPoint : MonoBehaviour
         if (other.gameObject.CompareTag("Player") || other.gameObject.CompareTag("AI"))
         {
             tracker = other.GetComponent<CheckpointTracker>();
-            tracker.respawnPoint = this.gameObject.transform;
+            tracker.respawnPoint = this.gameObject;
         }
     }
 }
