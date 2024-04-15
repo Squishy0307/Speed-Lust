@@ -15,6 +15,8 @@ public class Leaderboard : MonoBehaviour
     public CheckpointTracker player;
     public int padAmount = 35;
 
+    public int playerPos;
+
     private void Start()
     {
         //get reference to the leaderboard text component
@@ -36,7 +38,14 @@ public class Leaderboard : MonoBehaviour
 
     private void Update()
     {
+        
         playerPosition.text = player.position + "/8";
+        if(player.finishLinePass > 0)
+        {
+            player.position = car.IndexOf(player, 0, car.Count) + 1;
+        }
+        
+        //playerPos = 
     }
 
     public int DoLeaderboard(string DriverName)
@@ -60,6 +69,8 @@ public class Leaderboard : MonoBehaviour
 
             if (car[i].DriverName == "Player")
             {
+                player = car[i];
+                //car[i].position = car.IndexOf(car[i], 0, car.Count);
                 car[i].DriverName = "<color=red>Player</color>";
             }
         }
